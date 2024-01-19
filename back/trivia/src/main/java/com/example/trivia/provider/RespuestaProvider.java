@@ -6,4 +6,6 @@ import com.example.trivia.entity.RespuestaEntity;
 
 public interface RespuestaProvider{
 	List<RespuestaEntity>findAllRespuestas();
+	
+	//String corregirRespuesta(Long idPregunta);
 }

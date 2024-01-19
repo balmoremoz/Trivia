@@ -2,8 +2,8 @@ package com.example.trivia.provider;
 
 import java.util.List;
 
-import com.example.trivia.entity.PreguntaEntity;
+import com.example.trivia.dto.PreguntaDto;
 
 public interface PreguntaProvider {
-	List<PreguntaEntity>findAllPreguntas();
+	List<PreguntaDto>findAllPreguntas();
 }

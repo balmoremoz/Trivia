@@ -1,0 +1,54 @@
+.tablero {
+	display: grid;
+	gap: 0;
+	margin: 10px;
+	margin: 10px;
+	width: 250px;
+	height: 250px;
+}
+
+.casilla {
+	width: 50px;
+	height: 50px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+}
+
+i {
+	position: absolute;
+	top: 35%;
+	left: 35%;
+}
+
+.H {
+	position: relative;
+	background-color: #87CEEB;
+}
+
+.D {
+	position: relative;
+	background-color: orange;
+}
+
+.E {
+	position: relative;
+	background-color: purple;
+}
+
+.G {
+	position: relative;
+	background-color: blue;
+}
+
+.A {
+	position: relative;
+	background-color: yellow;
+}
+
+.C {
+	position: relative;
+	background-color: greenyellow;
+}

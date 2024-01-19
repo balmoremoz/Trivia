@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.trivia.entity.RespuestaEntity;
@@ -24,4 +25,9 @@ public class RespuestaController {
 		List<RespuestaEntity>respuestas=respuestaProvider.findAllRespuestas();
 		return new ResponseEntity<>(respuestas,HttpStatus.OK);
 	}
+	
+	/*@RequestMapping(value="/corregir", params={"idPregunta"})
+	public ResponseEntity<Boolean>corregirRespuesta(@RequestParam (defaultValue = "idPregunta")Long idPregunta){
+		return new ResponseEntity<>(respuestaProvider.corregirRespuesta(idPregunta),HttpStatus.OK);
+	}*/
 }

@@ -1,11 +1,13 @@
 package com.example.trivia.provider.impl;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.example.trivia.dto.PreguntaDto;
 import com.example.trivia.entity.PreguntaEntity;
 import com.example.trivia.provider.PreguntaProvider;
 import com.example.trivia.repository.PreguntaRepository;
@@ -14,12 +16,19 @@ import com.example.trivia.repository.PreguntaRepository;
 public class PreguntaProviderImp implements PreguntaProvider {
 	@Autowired
 	PreguntaRepository preguntaRepository;
-
+	@Autowired
+	ModelMapper modeMapper;
 	@Override
-	public List<PreguntaEntity> findAllPreguntas() {
+	public List<PreguntaDto> findAllPreguntas() {
 		List<PreguntaEntity>preguntas=preguntaRepository.findAll();
-		return preguntas;
+		List<PreguntaDto>preguntasDto=new ArrayList<PreguntaDto>();
+		
+		for(PreguntaEntity pregunta:preguntas) {
+			preguntasDto.add(modeMapper.map(pregunta,PreguntaDto.class));
+		}
+		return preguntasDto;
 	}
+	
 	/*@Override
 	public PreguntaEntity findPreguntaById(Long id) {
 		Optional<PreguntaEntity> pregunta= preguntaRepository.findById(id);

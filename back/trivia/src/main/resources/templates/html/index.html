@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Trivia</title>
-        <script type="text/javascript" th:src="@{/scripts/script.js}"></script>
-    </head>
-    <body>
-        <button id="b1" onclick="llamada()">llamada</button>
-    </body>
+<head>
+<title>Trivia</title>
+<link rel="stylesheet" type="text/css" th:href="@{/styles/main.css}"></link>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+	rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+	<div class="tablero"></div>
+	<button id="b1" onclick="llamada()">llamada</button>
+	<script type="text/javascript" th:src="@{/scripts/script.js}"></script>
+</body>
 </html>

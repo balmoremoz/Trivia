@@ -10,19 +10,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
 @Data
-@Entity
-@Table(name="RESPUESTA")
+@Entity(name="RespuestaEntity")
+@Table(name="respuesta")
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class RespuestaEntity implements Serializable{
+	private static final long serialVersionUID = 1L;
 	@Id
 	@Column(name="id")
 	private Long Id;
@@ -30,12 +29,10 @@ public class RespuestaEntity implements Serializable{
 	private String respuesta;
 	@Column(name="correcta") 
 	private char correcta;
-	@Column(name="id_pregunta")
-	private Long idPregunta;
-	/*
-	  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-	  @JoinColumn(name = "id_pregunta", nullable = false)
-	  @OnDelete(action = OnDeleteAction.CASCADE)
-	  private PreguntaEntity pregunta;
-	  */
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_pregunta")
+	@JsonIgnore  
+	private PreguntaEntity pregunta;
+	
+
 }
