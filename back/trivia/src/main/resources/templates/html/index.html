@@ -1,15 +1,61 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Trivia</title>
-<link rel="stylesheet" type="text/css" th:href="@{/styles/main.css}"></link>
-<link
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
-	rel="stylesheet" type="text/css"></link>
+	<title>Trivia</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/styles/main.css}">
+	</link>
 </head>
+
 <body>
-	<div class="tablero"></div>
-	<button id="b1" onclick="llamada()">llamada</button>
-	<script type="text/javascript" th:src="@{/scripts/script.js}"></script>
+	<div id="divCasilla">
+		<div id="player" class="fa fa-user-circle"></div>
+		<div class="contenedor">		
+			<div class="tablero"></div>
+			<div class="container">
+				<div class="cube">
+					<div class="cube-face front">
+						<div class="inside">
+							<span class="dot"></span>
+						</div>
+					</div>
+					<div class="cube-face back">
+						<div class="inside">
+							<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
+								class="dot"></span> <span class="dot"></span>
+							<span class="dot"></span>
+						</div>
+					</div>
+					<div class="cube-face left">
+						<div class="inside">
+							<span class="dot"></span> <span class="dot"></span> <span class="dot"></span>
+						</div>
+					</div>
+					<div class="cube-face right">
+						<div class="inside">
+							<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
+								class="dot"></span>
+						</div>
+					</div>
+					<div class="cube-face top">
+						<div class="inside">
+							<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
+								class="dot"></span> <span class="dot"></span>
+						</div>
+					</div>
+					<div class="cube-face bottom">
+						<div class="inside">
+							<span class="dot"></span> <span class="dot"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		<script type="text/javascript" th:src="@{/scripts/script.js}"></script>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet"
+			type="text/css">
+		</link>
 </body>
+
 </html>
