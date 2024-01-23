@@ -25,7 +25,8 @@ function llamada() {
   xhr.send();
 }
 
-
+const filas = 6;
+const columnas = 5;
 function generarTablero(filas, columnnas) {
 
   const tablero = document.querySelector('.tablero');
@@ -105,12 +106,13 @@ function generarTablero(filas, columnnas) {
   }
 }
 
-generarTablero(6, 5);
+generarTablero(filas, columnas);
 //-----------------------------------DADO---------------------------------------------------//
 const cube = document.querySelector('.cube');
 const time = 2;
 
-cube.addEventListener('click', () => {
+//cube.addEventListener('click', () => {
+function girarDado() {
   cube.style.transition = '';
   cube.style.transform = `translateY(40px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)`;
   setTimeout(() => {
@@ -121,44 +123,137 @@ cube.addEventListener('click', () => {
     switch (randomValue) {
       case 1:
         cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(3600deg) rotateZ(3600deg)`;
+        tirar(randomValue);
         break;
       case 2:
         cube.style.transform = `translateY(40px) rotateX(4410deg) rotateY(3600deg) rotateZ(3600deg)`;
+        tirar(randomValue);
         break;
       case 3:
         cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(4410deg) rotateZ(3600deg)`;
+        tirar(randomValue);
         break;
       case 4:
         cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(2430deg) rotateZ(3600deg)`;
+        tirar(randomValue);
         break;
       case 5:
         cube.style.transform = `translateY(40px) rotateX(2430deg) rotateY(3600deg) rotateZ(3600deg)`;
+        tirar(randomValue);
         break;
       case 6:
         cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(1980deg) rotateZ(3600deg)`;
+        tirar(randomValue);
         break;
     };
-  }, time * 2);
-  tirar(2);
-});
+  }, time * 1);
 
+}
+
+var posicionJugadorX = 20;
+const ficha = document.getElementById("player");
+var tablero = document.getElementById("contenedor");
+
+const salto = 60;
 function tirar(numeroCasillas) {
-  // function moveA() {
+
+  console.log("metodo0")
+
+  if (posicionJugadorX < salto * (columnas - 1)) {
+    console.log("metodo1")
+    moveD(numeroCasillas);
+  }
+  if (posicionJugadorX >= salto * (columnas - 1)) {
+    console.log("metodo2")
+    moveAb(numeroCasillas);
+  }
+  /*else{
+    if (pos >= numeroCasillas*salto) {
+      console.log("ifStop")
+      clearInterval(id)
+    } else {
+      console.log("ifSuma")
+      posicionJugadorX++;
+      pos++;
+      auxNumCasillas--;
+      ficha.style.right = posicionJugadorX + "px";
+      ficha.style.left = posicionJugadorX + "px";
+    }
+  }*/
+}
+function moveD(numeroCasillas) {
   let id = null;
-  const elem = document.getElementById("player");
   let pos = 0;
+  let auxNumCasillas = numeroCasillas * salto;
   clearInterval(id);
   id = setInterval(frame, 5);
   function frame() {
-    if (pos == 100) {
-      clearInterval(id)
-    } else {
-      pos++;
-      elem.style.right = pos + "px";
-      elem.style.left = pos + "px";
+    if (posicionJugadorX >= salto * (columnas - 1)) {
+      moveAb(Math.round(auxNumCasillas / 60));
+      console.log(Math.round(auxNumCasillas / 60));
+      clearInterval(id);
+    }
+    if (posicionJugadorX < salto * (columnas - 1)) {
+      if (pos >= numeroCasillas * salto) {
+        console.log("ifStop")
+        clearInterval(id)
+      } else {
+        console.log("ifSuma")
+        posicionJugadorX++;
+        pos++;
+        auxNumCasillas--;
+        ficha.style.right = posicionJugadorX + "px";
+        ficha.style.left = posicionJugadorX + "px";
+      }
     }
   }
 }
+let posicionJugadorY = 0;
+
+function moveAb(numeroCasillas) {
+  let id = null;
+  let pos = 0;
+  let salto = 60;
+  let auxNumCasillas = numeroCasillas * salto;
+  clearInterval(id);
+  id = setInterval(frame, 5);
+
+  function frame() {
+    if (posicionJugadorY < salto * (filas - 2)) {
+      if (pos >= numeroCasillas * salto) {
+        console.log("Stop vertical")
+        clearInterval(id)
+      } else {
+        pos++;
+        posicionJugadorY++;
+        auxNumCasillas--;
+        ficha.style.bottom = posicionJugadorY + "px";
+        ficha.style.top = posicionJugadorY + "px";
+      }
+    }
+  }
+}
+let auxJugadorPosicionX = posicionJugadorX;
+function moveI(numeroCasillas) {
+  let id = null;
+  const elem = document.getElementById("player");
+
+  clearInterval(id);
+  id = setInterval(frame, 5);
+
+  function frame() {
+    if (posicionJugadorX <= 0) {
+      clearInterval(id);
+      //moveArr();
+    } else {
+      pos--;
+      auxJugadorPosicionX--;
+      elem.style.bottom = posicionJugadorX + "px";
+      elem.style.left = posicionJugadorX + "px";
+    }
+  }
+}
+
 //---------- ANIMACIONNNNNNNNN----------------------//
 /*
 <!DOCTYPE html>
