@@ -1,14 +1,11 @@
-.contenedor{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: absolute;
-	
-}
+
 #player{
 	position:absolute;
-    top:10px;
-    left: 30px;
+    top:0;
+    left:0;
+}
+.fa-user-circle{
+    background-color: red;
 }
 #divCasilla{
     width: auto;
@@ -17,15 +14,17 @@
 .tablero {
 	display: grid;
 	gap: 0;
-	margin: 10px;
-	width: 250px;
-	height: 250px;
     z-index: -1;
 }
-
+.contenedor{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+    max-height: fit-content;
+    max-width: fit-content;
+}
 .casilla {
-	width: 50px;
-	height: 50px;
 	text-align: center;
 	display: flex;
 	align-items: center;
@@ -34,40 +33,64 @@
 	position: relative;
 }
 
-i {
-	position: absolute;
-	top: 35%;
-	left: 35%;
-}
-
 .H {
-	position: relative;
-	background-color: #87CEEB;
+    position: relative;
+    background-color: #87CEEB;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .D {
 	position: relative;
 	background-color: orange;
+    width: 50px;
+	height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .E {
 	position: relative;
 	background-color: purple;
+    width: 50px;
+	height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .G {
 	position: relative;
 	background-color: blue;
+    width: 50px;
+	height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .A {
 	position: relative;
 	background-color: yellow;
+    width: 50px;
+	height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .C {
 	position: relative;
 	background-color: greenyellow;
+    width: 50px;
+	height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .container {
@@ -75,7 +98,7 @@ i {
     height: 40px;
     perspective: 1200px;
     position: absolute;
-    margin-bottom: 30%;
+    margin-bottom: 20%;
 }
 
 .cube {
