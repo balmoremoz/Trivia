@@ -87,7 +87,7 @@ function generarTablero(filas, columnnas) {
                     icono.className = "fa fa-flask";
                     break;
                 case 'A':
-                    icono.className = "fa fa-map";
+                    icono.className = "fa fa-paint-brush";
                     break;
                 case 'E':
                     icono.className = "fa fa-film";
@@ -106,57 +106,59 @@ function generarTablero(filas, columnnas) {
 }
 const filas = 10;
 const columnas = 10;
+let filaActual=0;
+let columnaActual=0;
 generarTablero(filas, columnas);
-//-----------------------------------DADO---------------------------------------------------//
+//-----------------------------------DADO------------------------------------------------------------------------------//
 const cube = document.querySelector('.cube');
-const time = 2;
+const time = 0.5;
 
 //cube.addEventListener('click', () => {
 function girarDado() {
     cube.style.transition = '';
     cube.style.transform = `translateY(40px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)`;
-    setTimeout(() => {
-        cube.style.transition = `transform ${time}s`;
+
         const randomValue = Math.floor((Math.random() * 6) + 1);
-
-        switch (randomValue) {
-            case 1:
-                cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(3600deg) rotateZ(3600deg)`;
-                tirar(randomValue);
-                break;
-            case 2:
-                cube.style.transform = `translateY(40px) rotateX(4410deg) rotateY(3600deg) rotateZ(3600deg)`;
-                tirar(randomValue);
-                break;
-            case 3:
-                cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(4410deg) rotateZ(3600deg)`;
-                tirar(randomValue);
-                break;
-            case 4:
-                cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(2430deg) rotateZ(3600deg)`;
-                tirar(randomValue);
-                break;
-            case 5:
-                cube.style.transform = `translateY(40px) rotateX(2430deg) rotateY(3600deg) rotateZ(3600deg)`;
-                tirar(randomValue);
-                break;
-            case 6:
-                cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(1980deg) rotateZ(3600deg)`;
-                tirar(randomValue);
-                break;
-        };
-    }, time * 1);
-
+        setTimeout(() => {
+            cube.style.transition = `transform ${time}s`;          
+            switch (randomValue) {
+                case 1:
+                    cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(3600deg) rotateZ(3600deg)`;
+                    break;
+                case 2:
+                    cube.style.transform = `translateY(40px) rotateX(4410deg) rotateY(3600deg) rotateZ(3600deg)`;
+                    break;
+                case 3:
+                    cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(4410deg) rotateZ(3600deg)`;
+                    break;
+                case 4:
+                    cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(2430deg) rotateZ(3600deg)`;
+                    break;
+                case 5:
+                    cube.style.transform = `translateY(40px) rotateX(2430deg) rotateY(3600deg) rotateZ(3600deg)`;
+                    break;
+                case 6:
+                    cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(1980deg) rotateZ(3600deg)`;
+                    break;       
+            };   
+        }, time);
+        return new Promise((numeroRandom) => {
+            setTimeout(()=>{
+                numeroRandom(randomValue)
+            },1000);
+      });
 }
+
 let posicionJugadorX = 0;
 let posicionJugadorY = 0;
 let posicionJugadorXx = 0;
 let posicionJugadorYy = 0;
 const ficha = document.getElementById("player");
 const tamanoSalto = 50;
-//const tamanoCasilla=50
 
-function tirar(numeroCasillas) {
+async function tirar() {
+    const numeroCasillas=await girarDado();
+    console.log(numeroCasillas)
     if (posicionJugadorX < tamanoSalto * (columnas - 1)) {
         console.log("metodo1");
         moveDerecha(numeroCasillas);
@@ -180,12 +182,15 @@ function moveDerecha(numeroCasillas) {
     let auxNumCasillas = numeroCasillas * tamanoSalto;
     function frame() {
         if (posicionJugadorX >= tamanoSalto * (columnas - 1)) {
+            columnaActual=posicionJugadorX/50;
             moveTb(Math.round(auxNumCasillas / tamanoSalto));
             clearInterval(id);
         }
         if (posicionJugadorX < tamanoSalto * (columnas - 1)) {
             if (pos >= numeroCasillas * tamanoSalto) {
                 console.log("moveDerecha saltos completados")
+                columnaActual=posicionJugadorX/50;
+                console.log(arrayPosiciones[filaActual][columnaActual])
                 clearInterval(id);
             } else {
                 posicionJugadorX++;
@@ -205,12 +210,15 @@ function moveTb(numeroCasillas) {
     let auxNumCasillas = numeroCasillas * tamanoSalto;
     function frameAb() {
         if (posicionJugadorY >= tamanoSalto * (filas - 1)) {
+            filaActual=posicionJugadorY/50;
             moveIzquierda(Math.round(auxNumCasillas / tamanoSalto));
             clearInterval(idTb);
         }
         if (posicionJugadorY < tamanoSalto * (filas - 1)) {
             if (pos >= numeroCasillas * tamanoSalto) {
                 clearInterval(idTb);
+                filaActual=posicionJugadorY/50;
+                console.log(arrayPosiciones[filaActual][columnaActual])
             } else {
                 posicionJugadorY++;
                 pos++;
@@ -233,13 +241,18 @@ function moveIzquierda(numeroCasillas) {
     let auxNumCasillas = numeroCasillas * tamanoSalto;
 
     function frameIzq() {
-       
         if (posicionJugadorXx == 0) {
             moveBt(Math.round(auxNumCasillas / tamanoSalto))
+            columnaActual=posicionJugadorXx/50;
+            console.log(columnaActual)
             clearInterval(idIzq);
         }
         if (posicionJugadorXx > 0) {
             if (posIzq >= numeroCasillas * tamanoSalto) {
+                columnaActual=posicionJugadorXx/50;
+                console.log(arrayPosiciones[filaActual][columnaActual])
+                console.log(columnaActual)
+                console.log(filaActual)
                 clearInterval(idIzq);
             } else {
                 posIzq++;
@@ -270,13 +283,14 @@ function moveBt(numeroCasillas) {
             posicionJugadorYy = 0;
             primeraD=true;
             primeraI=true;
-
             moveDerecha(Math.round(auxNumCasillas / tamanoSalto))
+            filaActual=posicionJugadorYy/50;
             clearInterval(id);
         }
         if(posicionJugadorYy>0){
             if (pos >= numeroCasillas * tamanoSalto) {
-                console.log("moveBt saltos completados")
+                filaActual=posicionJugadorYy/50;
+                console.log(arrayPosiciones[filaActual][columnaActual])
                 clearInterval(id);
             } else {
                 posicionJugadorYy--;
@@ -286,4 +300,5 @@ function moveBt(numeroCasillas) {
             }
         }
     }
+    
 }

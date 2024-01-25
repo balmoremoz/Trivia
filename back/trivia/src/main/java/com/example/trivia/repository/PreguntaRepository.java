@@ -9,5 +9,5 @@ import com.example.trivia.entity.PreguntaEntity;
 public interface PreguntaRepository extends JpaRepository<PreguntaEntity, Long> {
 
 	Optional<PreguntaEntity> findById(Long id);
-	
+	PreguntaEntity findByCategoria(String categoria);
 }

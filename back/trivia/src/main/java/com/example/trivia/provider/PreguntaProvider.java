@@ -6,4 +6,5 @@ import com.example.trivia.dto.PreguntaDto;
 
 public interface PreguntaProvider {
 	List<PreguntaDto>findAllPreguntas();
+	PreguntaDto findByCategoria(String categoria);
 }

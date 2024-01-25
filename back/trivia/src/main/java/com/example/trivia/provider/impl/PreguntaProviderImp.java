@@ -29,6 +29,12 @@ public class PreguntaProviderImp implements PreguntaProvider {
 		return preguntasDto;
 	}
 	
+	@Override 
+	public PreguntaDto findByCategoria(String categoria) {
+		PreguntaEntity pregunta=preguntaRepository.findByCategoria(categoria);
+		PreguntaEntity preguntaDto=modeMapper.map(pregunta, PreguntaDto.class);
+		return pre
+	}
 	/*@Override
 	public PreguntaEntity findPreguntaById(Long id) {
 		Optional<PreguntaEntity> pregunta= preguntaRepository.findById(id);
