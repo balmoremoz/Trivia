@@ -1,31 +1,10 @@
-var apiServerUrl = 'http://localhost:8081/pregunta/all';
-let posicionCat = 0;
+//------------------------------------------GERERACION DEL TABLERO------------------------------------------------//
 let arrayPosiciones = [];
-
-function llamada() {
-    let preguntas = new Array();
-    let xhr = new XMLHttpRequest();
-
-    xhr.open('GET', apiServerUrl, true);
-
-    xhr.onload = function () {
-        if (xhr.status >= 200 && xhr.status < 300) {
-            var responseData = JSON.parse(xhr.responseText);
-            console.log('Resultado:', responseData);
-            preguntas.push(responseData)
-
-        } else {
-            console.error('Error', xhr.statusText);
-        }
-    };
-
-    xhr.onerror = function () {
-        console.error('Error');
-    };
-    xhr.send();
-}
-
-
+const filas = 10;
+const columnas = 10;
+let filaActual = 0;
+let columnaActual = 0;
+let posicionCat = 0;
 function generarTablero(filas, columnnas) {
 
     const tablero = document.querySelector('.tablero');
@@ -104,73 +83,79 @@ function generarTablero(filas, columnnas) {
         }
     }
 }
-const filas = 10;
-const columnas = 10;
-let filaActual=0;
-let columnaActual=0;
+
 generarTablero(filas, columnas);
 //-----------------------------------DADO------------------------------------------------------------------------------//
 const cube = document.querySelector('.cube');
 const time = 0.5;
-
+let respondida;
 //cube.addEventListener('click', () => {
 function girarDado() {
+    popUp.style.display = "none";
     cube.style.transition = '';
     cube.style.transform = `translateY(40px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)`;
-
-        const randomValue = Math.floor((Math.random() * 6) + 1);
+    respondida = 0;
+    const randomValue = Math.floor((Math.random() * 6) + 1);
+    setTimeout(() => {
+        cube.style.transition = `transform ${time}s`;
+        switch (randomValue) {
+            case 1:
+                cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(3600deg) rotateZ(3600deg)`;
+                break;
+            case 2:
+                cube.style.transform = `translateY(40px) rotateX(4410deg) rotateY(3600deg) rotateZ(3600deg)`;
+                break;
+            case 3:
+                cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(4410deg) rotateZ(3600deg)`;
+                break;
+            case 4:
+                cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(2430deg) rotateZ(3600deg)`;
+                break;
+            case 5:
+                cube.style.transform = `translateY(40px) rotateX(2430deg) rotateY(3600deg) rotateZ(3600deg)`;
+                break;
+            case 6:
+                cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(1980deg) rotateZ(3600deg)`;
+                break;
+        };
+    }, time);
+    return new Promise((numeroRandom) => {
         setTimeout(() => {
-            cube.style.transition = `transform ${time}s`;          
-            switch (randomValue) {
-                case 1:
-                    cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(3600deg) rotateZ(3600deg)`;
-                    break;
-                case 2:
-                    cube.style.transform = `translateY(40px) rotateX(4410deg) rotateY(3600deg) rotateZ(3600deg)`;
-                    break;
-                case 3:
-                    cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(4410deg) rotateZ(3600deg)`;
-                    break;
-                case 4:
-                    cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(2430deg) rotateZ(3600deg)`;
-                    break;
-                case 5:
-                    cube.style.transform = `translateY(40px) rotateX(2430deg) rotateY(3600deg) rotateZ(3600deg)`;
-                    break;
-                case 6:
-                    cube.style.transform = `translateY(40px) rotateX(3600deg) rotateY(1980deg) rotateZ(3600deg)`;
-                    break;       
-            };   
-        }, time);
-        return new Promise((numeroRandom) => {
-            setTimeout(()=>{
-                numeroRandom(randomValue)
-            },1000);
-      });
+            numeroRandom(randomValue)
+        }, 1000);
+    });
 }
-
+//-------------------------------------MOVIMIENTO DE LA FICHA------------------------------------------------------------//
 let posicionJugadorX = 0;
 let posicionJugadorY = 0;
 let posicionJugadorXx = 0;
 let posicionJugadorYy = 0;
 const ficha = document.getElementById("player");
-const tamanoSalto = 50;
-
+const preguntaPopup = document.getElementById("popUpPregunta");
+const formRespuestas = document.getElementById("respuestas");
+const preguntaP = document.getElementById("pregunta");
+const tamanoSaltoHorizontal = document.querySelector(".H").offsetWidth;
+const tamanoSaltoVertical = document.querySelector(".H").offsetHeight;
 async function tirar() {
-    const numeroCasillas=await girarDado();
+    preguntaP.innerText = "";
+
+    while (formRespuestas.firstChild) {
+        formRespuestas.removeChild(formRespuestas.firstChild);
+    }
+    const numeroCasillas = await girarDado();
     console.log(numeroCasillas)
-    if (posicionJugadorX < tamanoSalto * (columnas - 1)) {
+    if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1)) {
         console.log("metodo1");
         moveDerecha(numeroCasillas);
-    } else if (posicionJugadorY < tamanoSalto * (filas - 1)) {
+    } else if (posicionJugadorY < tamanoSaltoVertical * (filas - 1)) {
         console.log("metodo2");
-        moveTb(numeroCasillas);
-    } else if (posicionJugadorX >= tamanoSalto * (columnas - 1)&&(posicionJugadorY >= tamanoSalto * (filas - 1))) {
+        moveArribaAbajo(numeroCasillas);
+    } else if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1) && (posicionJugadorY >= tamanoSaltoVertical * (filas - 1))) {
         console.log("metodo3");
         moveIzquierda(numeroCasillas);
     } else {
         console.log("metodo4");
-        moveBt(numeroCasillas);
+        moveAbajoArriba(numeroCasillas);
     }
 }
 
@@ -179,18 +164,17 @@ function moveDerecha(numeroCasillas) {
     clearInterval(id);
     id = setInterval(frame, 5);
     let pos = 0;
-    let auxNumCasillas = numeroCasillas * tamanoSalto;
+    let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
     function frame() {
-        if (posicionJugadorX >= tamanoSalto * (columnas - 1)) {
-            columnaActual=posicionJugadorX/50;
-            moveTb(Math.round(auxNumCasillas / tamanoSalto));
+        if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1)) {
+            columnaActual = posicionJugadorX / tamanoSaltoHorizontal;
+            moveArribaAbajo(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
             clearInterval(id);
         }
-        if (posicionJugadorX < tamanoSalto * (columnas - 1)) {
-            if (pos >= numeroCasillas * tamanoSalto) {
-                console.log("moveDerecha saltos completados")
-                columnaActual=posicionJugadorX/50;
-                console.log(arrayPosiciones[filaActual][columnaActual])
+        if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1)) {
+            if (pos >= numeroCasillas * tamanoSaltoHorizontal) {
+                columnaActual = posicionJugadorX / tamanoSaltoHorizontal;
+                cargarPregunta(arrayPosiciones[filaActual][columnaActual])
                 clearInterval(id);
             } else {
                 posicionJugadorX++;
@@ -202,23 +186,23 @@ function moveDerecha(numeroCasillas) {
     }
 }
 
-function moveTb(numeroCasillas) {
+function moveArribaAbajo(numeroCasillas) {
     let idTb = null;
     clearInterval(idTb);
     idTb = setInterval(frameAb, 5);
     let pos = 0;
-    let auxNumCasillas = numeroCasillas * tamanoSalto;
+    let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
     function frameAb() {
-        if (posicionJugadorY >= tamanoSalto * (filas - 1)) {
-            filaActual=posicionJugadorY/50;
-            moveIzquierda(Math.round(auxNumCasillas / tamanoSalto));
+        if (posicionJugadorY >= tamanoSaltoVertical * (filas - 1)) {
+            filaActual = posicionJugadorY / tamanoSaltoVertical;
+            moveIzquierda(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
             clearInterval(idTb);
         }
-        if (posicionJugadorY < tamanoSalto * (filas - 1)) {
-            if (pos >= numeroCasillas * tamanoSalto) {
+        if (posicionJugadorY < tamanoSaltoVertical * (filas - 1)) {
+            if (pos >= numeroCasillas * tamanoSaltoVertical) {
                 clearInterval(idTb);
-                filaActual=posicionJugadorY/50;
-                console.log(arrayPosiciones[filaActual][columnaActual])
+                filaActual = posicionJugadorY / tamanoSaltoVertical;
+                cargarPregunta(arrayPosiciones[filaActual][columnaActual])
             } else {
                 posicionJugadorY++;
                 pos++;
@@ -231,29 +215,28 @@ function moveTb(numeroCasillas) {
 let primeraI = true
 function moveIzquierda(numeroCasillas) {
     if (primeraI) {
-        posicionJugadorXx =posicionJugadorX;
+        posicionJugadorXx = posicionJugadorX;
         primeraI = false
     }
     let idIzq = null;
     let posIzq = 0;
     clearInterval(idIzq);
     idIzq = setInterval(frameIzq, 5);
-    let auxNumCasillas = numeroCasillas * tamanoSalto;
+    let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
 
     function frameIzq() {
         if (posicionJugadorXx == 0) {
-            moveBt(Math.round(auxNumCasillas / tamanoSalto))
-            columnaActual=posicionJugadorXx/50;
+            moveAbajoArriba(Math.round(auxNumCasillas / tamanoSaltoVertical))
+            columnaActual = posicionJugadorXx / tamanoSaltoHorizontal;
             console.log(columnaActual)
             clearInterval(idIzq);
         }
         if (posicionJugadorXx > 0) {
-            if (posIzq >= numeroCasillas * tamanoSalto) {
-                columnaActual=posicionJugadorXx/50;
-                console.log(arrayPosiciones[filaActual][columnaActual])
-                console.log(columnaActual)
-                console.log(filaActual)
+            if (posIzq >= numeroCasillas * tamanoSaltoHorizontal) {
+                columnaActual = posicionJugadorXx / tamanoSaltoHorizontal;
+                (arrayPosiciones[filaActual][columnaActual])
                 clearInterval(idIzq);
+                cargarPregunta(arrayPosiciones[filaActual][columnaActual])
             } else {
                 posIzq++;
                 posicionJugadorXx--;
@@ -264,8 +247,8 @@ function moveIzquierda(numeroCasillas) {
     }
 }
 let primeraD = true
-function moveBt(numeroCasillas) {
-    let auxNumCasillas = numeroCasillas * tamanoSalto;
+function moveAbajoArriba(numeroCasillas) {
+    let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
     if (primeraD) {
         posicionJugadorYy = posicionJugadorY;
         primeraD = false
@@ -281,16 +264,16 @@ function moveBt(numeroCasillas) {
             posicionJugadorY = 0;
             posicionJugadorXx = 0;
             posicionJugadorYy = 0;
-            primeraD=true;
-            primeraI=true;
-            moveDerecha(Math.round(auxNumCasillas / tamanoSalto))
-            filaActual=posicionJugadorYy/50;
+            primeraD = true;
+            primeraI = true;
+            moveDerecha(Math.round(auxNumCasillas / tamanoSaltoHorizontal))
+            filaActual = posicionJugadorYy / tamanoSaltoVertical;
             clearInterval(id);
         }
-        if(posicionJugadorYy>0){
-            if (pos >= numeroCasillas * tamanoSalto) {
-                filaActual=posicionJugadorYy/50;
-                console.log(arrayPosiciones[filaActual][columnaActual])
+        if (posicionJugadorYy > 0) {
+            if (pos >= numeroCasillas * tamanoSaltoVertical) {
+                filaActual = posicionJugadorYy / tamanoSaltoVertical;
+                cargarPregunta(arrayPosiciones[filaActual][columnaActual])
                 clearInterval(id);
             } else {
                 posicionJugadorYy--;
@@ -300,5 +283,139 @@ function moveBt(numeroCasillas) {
             }
         }
     }
-    
+
 }
+//-----------------------------------------LLAMADAS BACK-----------------------------------------------------------//
+const popUp = document.getElementById("popUpPregunta");
+let urlPreguntas = 'http://localhost:8081/pregunta/';
+let urlRespuestas = 'http://localhost:8081/respuesta/';
+let idRespuestaCorregir;
+cont = 1
+function cargarPregunta(categoriaActual) {
+
+    let categoria;
+    let pregunta = new Object();
+    let xhr = new XMLHttpRequest();
+
+    popUp.style.display = "block"
+    cube.style.display = "none";
+    switch (categoriaActual) {
+        case 'H':
+            categoria = "Historia"
+            break;
+        case 'G':
+            categoria = "Geografía"
+            break;
+        case 'A':
+            categoria = "Arte y Literatura"
+            break;
+        case 'D':
+            categoria = "Deportes y Pasatiempos"
+            break;
+        case 'E':
+            categoria = "Entretenimiento"
+            break;
+        case 'C':
+            categoria = "Ciencias y Naturaleza"
+            break;
+    }
+
+    xhr.open('GET', urlPreguntas + "/categoria?categoria=" + categoria, true);
+
+    xhr.onload = function () {
+
+        if (xhr.status >= 200 && xhr.status < 300) {
+
+            let responseData = JSON.parse(xhr.responseText);
+            pregunta = responseData;
+
+            preguntaP.innerText = pregunta.pregunta;
+            //preguntaPopup.appendChild(preguntaP);
+            preguntaPopup.style.top = (tamanoSaltoVertical * filas) + "px";
+            let btnConfirmar = document.createElement("button")
+            btnConfirmar.setAttribute("type", "button")
+            btnConfirmar.setAttribute("onclick", "corregirRespuesta()")
+            btnConfirmar.setAttribute("id", "btnConfirmar");
+            btnConfirmar.innerText = "CONFIRMAR"
+            btnConfirmar.style.marginTop = "20px";
+            btnConfirmar.style.width = "fit-content";
+
+            pregunta.respuestas.forEach(respuesta => {
+                let respuestaRb = document.createElement("input")
+                let labelRepuesta = document.createElement("label")
+                labelRepuesta.setAttribute("class", "labelRespuesta");
+                respuestaRb.setAttribute("type", "radio")
+                respuestaRb.setAttribute("name", "respuesta")
+                respuestaRb.setAttribute("value", respuesta.id)
+                labelRepuesta.innerText = respuesta.respuesta;
+                labelRepuesta.style.marginTop = "10px";
+
+                respuestaRb.style.visibility = "hidden"
+                formRespuestas.appendChild(labelRepuesta);
+
+                labelRepuesta.appendChild(respuestaRb);
+
+                if (cont == 1) {
+                    labelRepuesta.style.gridColumnStart = "1"
+                }
+                if (cont == 2) {
+                    labelRepuesta.style.gridColumnStart = "2"
+                    cont = 0;
+                }
+                cont++
+
+                //-----------SELECCION DE RESPUESTAS-------------------------///
+                let radios = document.forms["respuestas"].elements["respuesta"];
+                for (let i = 0, max = radios.length; i < max; i++) {
+                    radios[i].onclick = function () {
+                        corregirRespuesta(this, this.value)
+                    }
+                }
+            });
+            btnConfirmar.style.gridRowStart = "3"
+        } else {
+            console.error('Error', xhr.statusText);
+        }
+
+    };
+
+    xhr.onerror = function () {
+        console.error('Error');
+    };
+    xhr.send();
+}
+
+function corregirRespuesta(radio, idRespuesta) {
+
+    if (respondida == 0) {
+
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', urlRespuestas + "corregir?idRespuesta=" + idRespuesta, true);
+        xhr.onload = function () {
+
+            if (xhr.status >= 200 && xhr.status < 300) {
+                let responseData = xhr.responseText;
+
+
+                if (responseData == "true") {
+
+                    radio.parentNode.style.backgroundColor = "green"
+
+                } else if (responseData == "false") {
+
+                    radio.parentNode.style.backgroundColor = "red"
+                }
+
+            } else {
+                console.error('Error', xhr.statusText);
+            }
+        }
+        xhr.onerror = function () {
+            console.error('Error');
+        };
+        xhr.send();
+        cube.style.display = "block"
+        respondida = 1;
+    }
+}
+

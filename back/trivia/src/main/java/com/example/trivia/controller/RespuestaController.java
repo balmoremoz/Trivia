@@ -22,12 +22,14 @@ public class RespuestaController {
 
 	@GetMapping("/all")
 	public ResponseEntity<List<RespuestaEntity>> getAllRespuestas() {
-		List<RespuestaEntity>respuestas=respuestaProvider.findAllRespuestas();
-		return new ResponseEntity<>(respuestas,HttpStatus.OK);
+		List<RespuestaEntity> respuestas = respuestaProvider.findAllRespuestas();
+		return new ResponseEntity<>(respuestas, HttpStatus.OK);
 	}
-	
-	/*@RequestMapping(value="/corregir", params={"idPregunta"})
-	public ResponseEntity<Boolean>corregirRespuesta(@RequestParam (defaultValue = "idPregunta")Long idPregunta){
-		return new ResponseEntity<>(respuestaProvider.corregirRespuesta(idPregunta),HttpStatus.OK);
-	}*/
+
+	@GetMapping(value = "/corregir")
+	public ResponseEntity<Boolean> corregirRespuesta(@RequestParam(defaultValue = "idRespuesta") String idRespuesta)
+	{
+		Long idRespuestaP=Long.parseLong(idRespuesta);
+		return new ResponseEntity<>(respuestaProvider.corregirRespuesta(idRespuestaP), HttpStatus.OK);
+	}
 }

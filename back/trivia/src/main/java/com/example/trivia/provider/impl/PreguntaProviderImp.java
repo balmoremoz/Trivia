@@ -18,31 +18,29 @@ public class PreguntaProviderImp implements PreguntaProvider {
 	PreguntaRepository preguntaRepository;
 	@Autowired
 	ModelMapper modeMapper;
+
 	@Override
 	public List<PreguntaDto> findAllPreguntas() {
-		List<PreguntaEntity>preguntas=preguntaRepository.findAll();
-		List<PreguntaDto>preguntasDto=new ArrayList<PreguntaDto>();
-		
-		for(PreguntaEntity pregunta:preguntas) {
-			preguntasDto.add(modeMapper.map(pregunta,PreguntaDto.class));
+		List<PreguntaEntity> preguntas = preguntaRepository.findAll();
+		List<PreguntaDto> preguntasDto = new ArrayList<PreguntaDto>();
+
+		for (PreguntaEntity pregunta : preguntas) {
+			preguntasDto.add(modeMapper.map(pregunta, PreguntaDto.class));
 		}
 		return preguntasDto;
 	}
-	
-	@Override 
+
+	@Override
 	public PreguntaDto findByCategoria(String categoria) {
-		PreguntaEntity pregunta=preguntaRepository.findByCategoria(categoria);
-		PreguntaEntity preguntaDto=modeMapper.map(pregunta, PreguntaDto.class);
-		return pre
+		PreguntaEntity pregunta = preguntaRepository.PreguntaRandomPorCategoria(categoria);
+		PreguntaDto preguntaDto= modeMapper.map(pregunta, PreguntaDto.class);
+		
+		return preguntaDto;
 	}
-	/*@Override
-	public PreguntaEntity findPreguntaById(Long id) {
-		Optional<PreguntaEntity> pregunta= preguntaRepository.findById(id);
-		if (pregunta.isPresent()) {
-			return pregunta.get();
-		}
-		return null;
-	}*/
-	
-	
+	/*
+	 * @Override public PreguntaEntity findPreguntaById(Long id) {
+	 * Optional<PreguntaEntity> pregunta= preguntaRepository.findById(id); if
+	 * (pregunta.isPresent()) { return pregunta.get(); } return null; }
+	 */
+
 }

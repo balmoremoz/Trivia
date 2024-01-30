@@ -19,8 +19,13 @@ public class RespuestaProviderImp implements RespuestaProvider {
 		return respuestas;
 	}
 
-	/*
-	 * public String corregirRespuesta(Long id) { return
-	 * respuestaRepository.corregirRespuesta( id); }
-	 */
+	
+	 public Boolean corregirRespuesta(Long id) { 
+		 if(respuestaRepository.corregirRespuesta( id).equals("y")) {
+			 return true;
+		 }else {
+			 return false ; 
+		 }
+	 }
+	 
 }

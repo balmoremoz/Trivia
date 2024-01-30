@@ -1,9 +1,44 @@
+body{
+    display: flex;
+    justify-content: center;
+    height: fit-content;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12;
+}
 
+#popUpPregunta{
+    position: relative;
+    text-align: center;
+    border-style: double;
+    padding: 34px;
+    display: none;
+}
 #player{
 	position:absolute;
     top:0;
     left:0;
 }
+.labelRespuesta{
+    text-align: center;
+    width: 200px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-style: solid;
+    border-radius: 20px;
+    border-width: 1px;
+}
+#respuestas{
+    display: grid;
+    flex-direction: column;
+    align-items: center;
+    justify-items: start;
+    justify-content: center;
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+}
+
 .fa-user-circle{
     background-color: red;
 }
@@ -17,12 +52,12 @@
     z-index: -1;
 }
 .contenedor{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: absolute;
-    max-height: fit-content;
-    max-width: fit-content;
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+
 }
 .casilla {
 	text-align: center;
@@ -35,9 +70,7 @@
 
 .H {
     position: relative;
-    background-color: yellow;
-    width: 50px;
-    height: 50px;
+    background-color: #ffca3a;;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,9 +78,7 @@
 
 .D {
 	position: relative;
-	background-color: orange;
-    width: 50px;
-	height: 50px;
+	background-color: #FB4D3D;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -55,9 +86,7 @@
 
 .E {
 	position: relative;
-	background-color: purple;
-    width: 50px;
-	height: 50px;
+	background-color: #BFAED5;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -65,9 +94,7 @@
 
 .G {
 	position: relative;
-	background-color: blue;
-    width: 50px;
-	height: 50px;
+	background-color: #6FBCEC;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,9 +102,7 @@
 
 .A {
 	position: relative;
-	background-color: pink;
-    width: 50px;
-	height: 50px;
+	background-color: #EEC6CA;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,17 +110,18 @@
 
 .C {
 	position: relative;
-	background-color: greenyellow;
-    width: 50px;
-	height: 50px;
+	background-color: #8ac926;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
+div#tablero div {
+    height: 60px;
+    width: 75px;
+}
 .container {
-    width: 40px;
-    height: 40px;
+    width: 80px;
+    height: 80px;
     perspective: 1200px;
     position: absolute;
     margin-bottom: 20%;
