@@ -87,7 +87,7 @@ function generarTablero(filas, columnnas) {
 
 generarTablero(filas, columnas);
 //-----------------------------------DADO------------------------------------------------------------------------------//
-const cube = document.querySelector('.cube');
+const cube = document.querySelector('.cubo');
 const time = 0.5;
 let respondida;
 let girando = false
