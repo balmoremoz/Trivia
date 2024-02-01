@@ -1,27 +1,24 @@
-body{
-    display: flex;
-    justify-content: center;
+body {
+    display: grid;
+    justify-content: space-around;
     height: fit-content;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12;
 }
 
-#popUpPregunta{
-    position: relative;
-    text-align: center;
-    border-style: double;
-    padding: 34px;
-    display: none;
+#player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 0 solid #0000;
+    border-radius: 20px;
+    background-color: white;
 }
-#player{
-	position:absolute;
-    top:0;
-    left:0;
-}
-.labelRespuesta{
+
+.labelRespuesta {
     text-align: center;
     width: 200px;
-    height: 30px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -29,99 +26,114 @@ body{
     border-radius: 20px;
     border-width: 1px;
 }
-#respuestas{
+
+#respuestas {
     display: grid;
     flex-direction: column;
     align-items: center;
     justify-items: start;
     justify-content: center;
-    grid-column-gap: 5px;
-    grid-row-gap: 5px;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
 }
 
-.fa-user-circle{
-    background-color: red;
+/*Tamaño de los iconos*/
+.fa {
+    font-size: 23px;
 }
-#divCasilla{
+
+.fa-user-circle {
+    background-color: black;
+}
+
+#divCasilla {
     width: auto;
     position: relative;
 }
+
 .tablero {
-	display: grid;
-	gap: 0;
+    display: grid;
+    gap: 0;
     z-index: -1;
 }
-.contenedor{
+
+.contenedor {
     display: flex;
-    position: absolute;
+    position: relative;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-
+    grid-column-start: 2;
+    grid-row-start: 1;
+    /* grid-column-end: 2;*/
 }
+
 .casilla {
-	text-align: center;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-weight: bold;
-	position: relative;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    position: relative;
 }
 
 .H {
     position: relative;
-    background-color: #ffca3a;;
+    background-color: #ffca3a;
+    ;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .D {
-	position: relative;
-	background-color: #FB4D3D;
+    position: relative;
+    background-color: #FB4D3D;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .E {
-	position: relative;
-	background-color: #BFAED5;
+    position: relative;
+    background-color: #BFAED5;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .G {
-	position: relative;
-	background-color: #6FBCEC;
+    position: relative;
+    background-color: #6FBCEC;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .A {
-	position: relative;
-	background-color: #EEC6CA;
+    position: relative;
+    background-color: #EEC6CA;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .C {
-	position: relative;
-	background-color: #8ac926;
+    position: relative;
+    background-color: #8ac926;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 div#tablero div {
     height: 60px;
     width: 75px;
 }
+
 .container {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     perspective: 1200px;
     position: absolute;
     margin-bottom: 20%;
@@ -135,7 +147,7 @@ div#tablero div {
 }
 
 .cube-face {
-    position: absolute; 
+    position: absolute;
     width: 100%;
     height: 100%;
     display: flex;
@@ -175,11 +187,13 @@ div#tablero div {
     display: grid;
     grid-template-columns: repeat(3, 8px);
     grid-template-rows: repeat(3, 8px);
+    column-gap: 10px;
+    row-gap: 10px;
 }
 
 .dot {
-    height: 7px;
-    width: 7px;
+    height: 17px;
+    width: 17px;
     background-color: black;
     border-radius: 50%;
     justify-self: center;
@@ -289,4 +303,119 @@ div#tablero div {
 .bottom .inside .dot:nth-child(2) {
     grid-row: 3;
     grid-column: 1;
+}
+
+/*------------------------------------------------------popUp PREGUNTAS----------------------*/
+#popUpPregunta {
+    /* top: 0; */
+    /* left: 0; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    /* width: 100%; */
+    transition: transform 300ms;
+    /* z-index: -1; */
+    grid-row-start: 1;
+    grid-column-start: 2;
+}
+
+#popUpPregunta div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: beige;
+    /* width: 400px; */
+    /* height: 400px; */
+    margin-top: 23%;
+    padding: 50px;
+    z-index: 1000;
+    border-radius: 10px;
+}
+
+#popUpPregunta[data-on='on'] {
+    transform: scale(1);
+}
+
+#popUpPregunta[data-on='off'] {
+    transform: scale(0);
+}
+
+#puntuaciones {
+    font-size: 8;
+    font-family: Arial, Helvetica, sans-serif;
+    border-width: 1px;
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+    height: 5px
+}
+
+/*-------------------------------------FUEGOS ARTIFICIALES-----------------------------------------------*/
+@keyframes firework {
+    0% {
+        transform: translate(-50%, 60vh);
+        width: 0.5vmin;
+        opacity: 1;
+    }
+
+    50% {
+        width: 0.5vmin;
+        opacity: 1;
+    }
+
+    100% {
+        width: 45vmin;
+        opacity: 0;
+    }
+}
+
+.firework[data-on='on'] {
+    transform: scale(1);
+}
+
+.firework[data-on='off'] {
+    transform: scale(0);
+}
+
+.firework,
+.firework::before,
+.firework::after {
+    --top: 60vh;
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0.5vmin;
+    aspect-ratio: 1;
+    background:
+        /* random backgrounds */
+        radial-gradient(circle, rgb(255, 0, 0) 0.2vmin, #0000 0) 50% 00%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.3vmin, #0000 0) 00% 50%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.5vmin, #0000 0) 50% 99%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.2vmin, #0000 0) 99% 50%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.3vmin, #0000 0) 80% 90%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.5vmin, #0000 0) 95% 90%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.5vmin, #ff000000 0) 10% 60%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.2vmin, #0000 0) 31% 80%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.3vmin, #0000 0) 80% 10%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.2vmin, #0000 0) 90% 23%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.3vmin, #0000 0) 45% 20%,
+        radial-gradient(circle, rgb(255, 0, 0) 0.5vmin, #0000 0) 13% 24%;
+    background-size: 0.5vmin 0.5vmin;
+    background-repeat: no-repeat;
+    animation: firework 0.5s infinite;
+}
+s
+.firework::before {
+    transform: translate(-50%, -50%) rotate(25deg) !important;
+}
+
+.firework::after {
+    transform: translate(-50%, -50%) rotate(-37deg) !important;
 }

@@ -8,54 +8,74 @@
 </head>
 
 <body>
-		<div class="contenedor">
-			<div id="player" class="fa fa-user-circle"></div>
-			<div id="tablero" class="tablero"></div>
-			<div class="container">
-				<div class="cube" onclick="tirar()">
-					<div class="cube-face front">
-						<div class="inside">
-							<span class="dot"></span>
-						</div>
-					</div>
-					<div class="cube-face back">
-						<div class="inside">
-							<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
-								class="dot"></span> <span class="dot"></span>
-							<span class="dot"></span>
-						</div>
-					</div>
-					<div class="cube-face left">
-						<div class="inside">
-							<span class="dot"></span> <span class="dot"></span> <span class="dot"></span>
-						</div>
-					</div>
-					<div class="cube-face right">
-						<div class="inside">
-							<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
-								class="dot"></span>
-						</div>
-					</div>
-					<div class="cube-face top">
-						<div class="inside">
-							<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
-								class="dot"></span> <span class="dot"></span>
-						</div>
-					</div>
-					<div class="cube-face bottom">
-						<div class="inside">
-							<span class="dot"></span> <span class="dot"></span>
-						</div>
+	<table id="puntuaciones">
+		<tr>
+			<th>preguntas respondidas</th>
+			<th id="totalPreguntas">0</th>
+		</tr>
+		<tr>
+			<th>preguntas correctas</th>
+			<th id="preguntasCorrectas">0</th>
+		</tr>
+		<tr>
+			<th>preguntas incorrectas</th>
+			<th id="preguntasIncorrectas">0</th>
+		</tr>
+		<tr>
+			<th>racha actual</th>
+			<th id="rachaActual">0</th>
+		</tr>
+	</table>
+
+	<div class="contenedor">
+		<div id="player" class="fa fa-user-circle"></div>
+		<div id="tablero" class="tablero"></div>
+		<div class="container">
+			<div class="cube" onclick="tirar()">
+				<div class="cube-face front">
+					<div class="inside">
+						<span class="dot"></span>
 					</div>
 				</div>
-			</div>	
-
+				<div class="cube-face back">
+					<div class="inside">
+						<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
+							class="dot"></span> <span class="dot"></span>
+						<span class="dot"></span>
+					</div>
+				</div>
+				<div class="cube-face left">
+					<div class="inside">
+						<span class="dot"></span> <span class="dot"></span> <span class="dot"></span>
+					</div>
+				</div>
+				<div class="cube-face right">
+					<div class="inside">
+						<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
+							class="dot"></span>
+					</div>
+				</div>
+				<div class="cube-face top">
+					<div class="inside">
+						<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
+							class="dot"></span> <span class="dot"></span>
+					</div>
+				</div>
+				<div class="cube-face bottom">
+					<div class="inside">
+						<span class="dot"></span> <span class="dot"></span>
+					</div>
+				</div>
+			</div>
 		</div>
-		<div id="popUpPregunta">
+
+	</div>
+	<div id="popUpPregunta" data-on="off">
+		<div id="divPregunta">
 			<p id="pregunta"></p>
 			<form id="respuestas" name="respuestas"></form>
 		</div>
-
+	</div>
 	<script type="text/javascript" th:src="@{/scripts/script.js}"></script>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet"
 		type="text/css">

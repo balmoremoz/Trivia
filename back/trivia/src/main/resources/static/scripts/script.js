@@ -5,6 +5,7 @@ const columnas = 10;
 let filaActual = 0;
 let columnaActual = 0;
 let posicionCat = 0;
+const divPregunta=document.getElementById("divPregunta");
 function generarTablero(filas, columnnas) {
 
     const tablero = document.querySelector('.tablero');
@@ -89,6 +90,7 @@ generarTablero(filas, columnas);
 const cube = document.querySelector('.cube');
 const time = 0.5;
 let respondida;
+let girando = false
 //cube.addEventListener('click', () => {
 function girarDado() {
     popUp.style.display = "none";
@@ -137,25 +139,23 @@ const preguntaP = document.getElementById("pregunta");
 const tamanoSaltoHorizontal = document.querySelector(".H").offsetWidth;
 const tamanoSaltoVertical = document.querySelector(".H").offsetHeight;
 async function tirar() {
-    preguntaP.innerText = "";
+    if(girando==false){
+        girando=true
+        preguntaP.innerText = "";
 
-    while (formRespuestas.firstChild) {
-        formRespuestas.removeChild(formRespuestas.firstChild);
-    }
-    const numeroCasillas = await girarDado();
-    console.log(numeroCasillas)
-    if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1)) {
-        console.log("metodo1");
-        moveDerecha(numeroCasillas);
-    } else if (posicionJugadorY < tamanoSaltoVertical * (filas - 1)) {
-        console.log("metodo2");
-        moveArribaAbajo(numeroCasillas);
-    } else if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1) && (posicionJugadorY >= tamanoSaltoVertical * (filas - 1))) {
-        console.log("metodo3");
-        moveIzquierda(numeroCasillas);
-    } else {
-        console.log("metodo4");
-        moveAbajoArriba(numeroCasillas);
+        while (formRespuestas.firstChild) {
+            formRespuestas.removeChild(formRespuestas.firstChild);
+        }
+        const numeroCasillas = await girarDado();
+        if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1)) {
+            moveDerecha(numeroCasillas);
+        } else if (posicionJugadorY < tamanoSaltoVertical * (filas - 1)) {
+            moveArribaAbajo(numeroCasillas);
+        } else if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1) && (posicionJugadorY >= tamanoSaltoVertical * (filas - 1))) {
+            moveIzquierda(numeroCasillas);
+        } else {
+            moveAbajoArriba(numeroCasillas);
+        }
     }
 }
 
@@ -228,7 +228,6 @@ function moveIzquierda(numeroCasillas) {
         if (posicionJugadorXx == 0) {
             moveAbajoArriba(Math.round(auxNumCasillas / tamanoSaltoVertical))
             columnaActual = posicionJugadorXx / tamanoSaltoHorizontal;
-            console.log(columnaActual)
             clearInterval(idIzq);
         }
         if (posicionJugadorXx > 0) {
@@ -287,10 +286,21 @@ function moveAbajoArriba(numeroCasillas) {
 }
 //-----------------------------------------LLAMADAS BACK-----------------------------------------------------------//
 const popUp = document.getElementById("popUpPregunta");
+const body=document.getElementsByTagName("body");
 let urlPreguntas = 'http://localhost:8081/pregunta/';
 let urlRespuestas = 'http://localhost:8081/respuesta/';
 let idRespuestaCorregir;
 cont = 1
+//-----------------------------------------MARCADOR PREGUNTAS-------------------------------------------------------//
+let totalPreguntas=0;
+let preguntasCorrectas=0
+let preguntasIncorrectas=0
+let rachaActual=0;
+const divTotalPreguntas=document.getElementById("totalPreguntas");
+const divPreguntasCorrectas=document.getElementById("preguntasCorrectas");
+const divPreguntasIncorrectas=document.getElementById("preguntasIncorrectas");
+const divRachaAcutal=document.getElementById("rachaActual");
+
 function cargarPregunta(categoriaActual) {
 
     let categoria;
@@ -298,7 +308,6 @@ function cargarPregunta(categoriaActual) {
     let xhr = new XMLHttpRequest();
 
     popUp.style.display = "block"
-    cube.style.display = "none";
     switch (categoriaActual) {
         case 'H':
             categoria = "Historia"
@@ -325,12 +334,10 @@ function cargarPregunta(categoriaActual) {
     xhr.onload = function () {
 
         if (xhr.status >= 200 && xhr.status < 300) {
-
+            totalPreguntas++;
             let responseData = JSON.parse(xhr.responseText);
             pregunta = responseData;
-
             preguntaP.innerText = pregunta.pregunta;
-            //preguntaPopup.appendChild(preguntaP);
             preguntaPopup.style.top = (tamanoSaltoVertical * filas) + "px";
             let btnConfirmar = document.createElement("button")
             btnConfirmar.setAttribute("type", "button")
@@ -350,7 +357,7 @@ function cargarPregunta(categoriaActual) {
                 labelRepuesta.innerText = respuesta.respuesta;
                 labelRepuesta.style.marginTop = "10px";
 
-                respuestaRb.style.visibility = "hidden"
+                respuestaRb.style.display = "none"
                 formRespuestas.appendChild(labelRepuesta);
 
                 labelRepuesta.appendChild(respuestaRb);
@@ -363,7 +370,7 @@ function cargarPregunta(categoriaActual) {
                     cont = 0;
                 }
                 cont++
-
+                popUp.setAttribute("data-on", "on")
                 //-----------SELECCION DE RESPUESTAS-------------------------///
                 let radios = document.forms["respuestas"].elements["respuesta"];
                 for (let i = 0, max = radios.length; i < max; i++) {
@@ -385,7 +392,7 @@ function cargarPregunta(categoriaActual) {
     xhr.send();
 }
 
-function corregirRespuesta(radio, idRespuesta) {
+async function corregirRespuesta(radio, idRespuesta) {
 
     if (respondida == 0) {
 
@@ -396,13 +403,16 @@ function corregirRespuesta(radio, idRespuesta) {
             if (xhr.status >= 200 && xhr.status < 300) {
                 let responseData = xhr.responseText;
 
-
                 if (responseData == "true") {
-
+                    preguntasCorrectas++;
+                    rachaActual++;    
+                    actualizarPuntajes(totalPreguntas,preguntasCorrectas,preguntasIncorrectas,rachaActual)
                     radio.parentNode.style.backgroundColor = "green"
-
+                    document.getElementsByClassName("firework")[0].setAttribute("data-on","on");
                 } else if (responseData == "false") {
-
+                    preguntasIncorrectas++;
+                    rachaActual=0;
+                    actualizarPuntajes(totalPreguntas,preguntasCorrectas,preguntasIncorrectas,rachaActual)
                     radio.parentNode.style.backgroundColor = "red"
                 }
 
@@ -416,6 +426,21 @@ function corregirRespuesta(radio, idRespuesta) {
         xhr.send();
         cube.style.display = "block"
         respondida = 1;
+        cerrarPopup();
+        girando = false
     }
 }
 
+function cerrarPopup() {
+    setTimeout(() => {
+        popUp.setAttribute("data-on", "off")
+    }, 2000);
+    
+}
+
+function actualizarPuntajes(totalPreguntas,preguntasCorrectas,preguntasIncorrectas,racha){
+    divTotalPreguntas.innerHTML=totalPreguntas
+    divPreguntasCorrectas.innerText=preguntasCorrectas;
+    divPreguntasIncorrectas.innerText=preguntasIncorrectas
+    divRachaAcutal.innerHTML=racha
+}
