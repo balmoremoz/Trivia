@@ -391,6 +391,7 @@ function cargarPregunta(categoriaActual) {
     };
     xhr.send();
 }
+const fuegosArtificiales=document.getElementsByClassName("firework")[0];
 
 async function corregirRespuesta(radio, idRespuesta) {
 
@@ -408,7 +409,8 @@ async function corregirRespuesta(radio, idRespuesta) {
                     rachaActual++;    
                     actualizarPuntajes(totalPreguntas,preguntasCorrectas,preguntasIncorrectas,rachaActual)
                     radio.parentNode.style.backgroundColor = "green"
-                    document.getElementsByClassName("firework")[0].setAttribute("data-on","on");
+                    fuegosArtificiales.setAttribute("data-on","on");
+                    fuegosArtificiales.style.animation="firework 2s infinite"
                 } else if (responseData == "false") {
                     preguntasIncorrectas++;
                     rachaActual=0;
@@ -434,6 +436,7 @@ async function corregirRespuesta(radio, idRespuesta) {
 function cerrarPopup() {
     setTimeout(() => {
         popUp.setAttribute("data-on", "off")
+        fuegosArtificiales.setAttribute("data-on","off")
     }, 2000);
     
 }

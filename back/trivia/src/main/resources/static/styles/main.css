@@ -1,6 +1,6 @@
 body {
     display: grid;
-    justify-content: space-around;
+    justify-content: center;
     height: fit-content;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12;
@@ -358,7 +358,7 @@ td {
 /*-------------------------------------FUEGOS ARTIFICIALES-----------------------------------------------*/
 @keyframes firework {
     0% {
-        transform: translate(-50%, 60vh);
+        transform: translate(80%, 80vh);
         width: 0.5vmin;
         opacity: 1;
     }
@@ -373,21 +373,25 @@ td {
         opacity: 0;
     }
 }
-
+.firework{
+    z-index: 1000;
+    grid-row-start: 1;
+    grid-column-start: 2;
+    margin-left: 50%;
+}
 .firework[data-on='on'] {
-    transform: scale(1);
+    display: block;
 }
 
 .firework[data-on='off'] {
-    transform: scale(0);
+    display: none;
 }
 
 .firework,
 .firework::before,
 .firework::after {
-    --top: 60vh;
+    --top: 100vh;
     content: "";
-    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -409,9 +413,8 @@ td {
         radial-gradient(circle, rgb(255, 0, 0) 0.5vmin, #0000 0) 13% 24%;
     background-size: 0.5vmin 0.5vmin;
     background-repeat: no-repeat;
-    animation: firework 0.5s infinite;
 }
-s
+
 .firework::before {
     transform: translate(-50%, -50%) rotate(25deg) !important;
 }
