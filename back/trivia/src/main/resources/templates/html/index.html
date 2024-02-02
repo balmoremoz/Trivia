@@ -2,90 +2,37 @@
 <html>
 
 <head>
-	<title>Trivia</title>
-	<link rel="stylesheet" type="text/css" th:href="@{/styles/main.css}">
-	</link>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-		integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"></link>
+<title>Trivia</title>
+<link rel="stylesheet" type="text/css" th:href="@{/styles/main.css}">
+</link>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+	crossorigin="anonymous">
+</link>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+	rel="stylesheet" type="text/css">
+</link>
 </head>
 
 <body>
-	<table id="puntuaciones" class="table table-striped">
-		<tr>
-			<th>preguntas respondidas</th>
-			<th id="totalPreguntas">0</th>
-		</tr>
-		<tr>
-			<th>preguntas correctas</th>
-			<th id="preguntasCorrectas">0</th>
-		</tr>
-		<tr>
-			<th>preguntas incorrectas</th>
-			<th id="preguntasIncorrectas">0</th>
-		</tr>
-		<tr>
-			<th>racha actual</th>
-			<th id="rachaActual">0</th>
-		</tr>
-	</table>
-
-	<div class="contenedor">
-		<div id="player" class="fa fa-user-circle"></div>
-		<div id="tablero" class="tablero"></div>
-		<div class="contenedorDado">
-			<div class="cubo" onclick="tirar()">
-				<div class="cubo-face front">
-					<div class="inside">
-						<span class="dot"></span>
-					</div>
-				</div>
-				<div class="cubo-face back">
-					<div class="inside">
-						<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
-							class="dot"></span> <span class="dot"></span>
-						<span class="dot"></span>
-					</div>
-				</div>
-				<div class="cubo-face left">
-					<div class="inside">
-						<span class="dot"></span> <span class="dot"></span> <span class="dot"></span>
-					</div>
-				</div>
-				<div class="cubo-face right">
-					<div class="inside">
-						<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
-							class="dot"></span>
-					</div>
-				</div>
-				<div class="cubo-face top">
-					<div class="inside">
-						<span class="dot"></span> <span class="dot"></span> <span class="dot"></span> <span
-							class="dot"></span> <span class="dot"></span>
-					</div>
-				</div>
-				<div class="cubo-face bottom">
-					<div class="inside">
-						<span class="dot"></span> <span class="dot"></span>
-					</div>
-				</div>
-			</div>
-		</div>
-
+	<div id="formulario">
+		<form method="get">
+			<input name="numeroJugadores" type="text"
+				placeholder="numero de jugadores"></input>
+			<button type="button" id="btnContinuar"
+				onclick="redireccionarAlJuego()">continuar</button>
+		</form>
 	</div>
-	<div class="firework" data-on="off"></div>
-	<div id="popUpPregunta" data-on="off">
-		<div id="divPregunta">
-			<p id="pregunta"></p>
-			<form id="respuestas" name="respuestas"></form>
-		</div>
-	</div>
+	<div id="content" class="d-none"></div>
+
+	<script type="text/javascript"
+		src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<script type="text/javascript" th:src="@{/scripts/scriptsInicio.js}"></script>
 	<script type="text/javascript" th:src="@{/scripts/script.js}"></script>
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet"
-		type="text/css">
-	</link>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-		crossorigin="anonymous"></script>
+
 </body>
 
 </html>
