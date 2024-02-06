@@ -15,21 +15,20 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
 	rel="stylesheet" type="text/css">
 </link>
+<script type="text/javascript"
+	src="https://code.jquery.com/jquery-3.5.1.js"></script>
 </head>
 
 <body>
 	<div id="formulario">
 		<form method="get">
-			<input name="numeroJugadores" type="text"
+			<input name="numeroJugadores" type="number"
 				placeholder="numero de jugadores"></input>
 			<button type="button" id="btnContinuar"
 				onclick="redireccionarAlJuego()">continuar</button>
 		</form>
 	</div>
 	<div id="content" class="d-none"></div>
-
-	<script type="text/javascript"
-		src="https://code.jquery.com/jquery-3.5.1.js"></script>
 	<script type="text/javascript" th:src="@{/scripts/scriptsInicio.js}"></script>
 	<script type="text/javascript" th:src="@{/scripts/script.js}"></script>
 

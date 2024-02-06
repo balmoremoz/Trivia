@@ -6,16 +6,17 @@ body {
     font-size: 12;
     column-gap: 10px;
 }
+#juego{
+	display:grid;
+	column-gap:10px;
+}
 
-#player {
-    position: absolute;
-    top: 0;
-    left: 0;
-    border: 0 solid #0000;
+.player{
+	position:absolute;
+	border: 0 solid #0000;
     border-radius: 20px;
     background-color: white;
 }
-
 .labelRespuesta {
     text-align: center;
     width: 200px;

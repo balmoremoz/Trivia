@@ -36,7 +36,10 @@ let divPreguntasCorrectas
 let divPreguntasIncorrectas
 let divRachaAcutal
 let fuegosArtificiales
-
+let arrayJugadores
+let turno
+let mapa = new Map();
+let catVertical;
 function inicializar() {
 
 	divPregunta = $('divPregunta')[0];
@@ -47,7 +50,7 @@ function inicializar() {
 	posicionJugadorY = 0;
 	posicionJugadorXx = 0;
 	posicionJugadorYy = 0;
-	ficha = document.getElementById("player");
+
 	preguntaPopup = document.getElementById("popUpPregunta");
 	formRespuestas = document.getElementById("respuestas");
 	preguntaP = document.getElementById("pregunta");
@@ -59,7 +62,7 @@ function inicializar() {
 	urlPreguntas = 'http://localhost:8081/pregunta/';
 	urlRespuestas = 'http://localhost:8081/respuesta/';
 	idRespuestaCorregir;
-	cont = 0
+	cont = 1;
 	//-----------------------------------------MARCADOR PREGUNTAS-------------------------------------------------------//
 	totalPreguntas = 0;
 	preguntasCorrectas = 0
@@ -70,9 +73,16 @@ function inicializar() {
 	divPreguntasIncorrectas = document.getElementById("preguntasIncorrectas");
 	divRachaAcutal = document.getElementById("rachaActual");
 	fuegosArtificiales = document.getElementsByClassName("firework")[0];
+	turno = 0
+	/*arrayJugadores.foreach((ficha)=>{
+		let cont=0;
+		ficha.style.top=tamanoSaltoVertical*cont;
+		ficha.style.left=tamanoSaltoHorizontal*cont;
+		cont++;
+	})*/
 
 }
-function generarTablero(f, c) {
+function generarTablero(f, c, numJugadores) {
 
 	filas = f;
 	columnas = c;
@@ -81,53 +91,93 @@ function generarTablero(f, c) {
 	tablero.style.gridTemplateColumns = `repeat(${columnas}, 1fr)`;
 	tablero.style.gridTemplateRows = `repeat(${filas}, 1fr)`;
 	const arrayCat = ['G', 'H', 'D', 'C', 'A', 'E'];
-
-	for (let i = 0; i < filas; i++) {
-		arrayPosiciones[i] = []
-	}
-
-	for (let j = 0; j < columnas; j++) {
-
-		if (posicionCat == arrayCat.length) {
-			posicionCat = 0;
+	mapa.set("H", "fa fa-university")
+	mapa.set("C", "fa fa-flask")
+	mapa.set("A", "fa fa-paint-brush")
+	mapa.set("E", "fa fa-film")
+	mapa.set("D", "fa fa-bicycle")
+	mapa.set("G", "fa fa-map")
+	catVertical = arrayCat.length - 1;
+	/*
+		for (let i = 0; i < filas; i++) {
+			arrayPosiciones[i] = []
 		}
-		arrayPosiciones[0][j] = arrayCat[posicionCat]
-		posicionCat++;
-
-	}
-
-	for (let j = 1; j < filas; j++) {
-		if (posicionCat == arrayCat.length) {
-			posicionCat = 0;
+	
+		for (let j = 0; j < columnas; j++) {
+	
+			if (posicionCat == arrayCat.length) {
+				posicionCat = 0;
+			}
+			arrayPosiciones[0][j] = arrayCat[posicionCat]
+			posicionCat++;
+	
 		}
-		arrayPosiciones[j][columnas - 1] = arrayCat[posicionCat]
-		posicionCat++
-	}
-
-	for (let j = columnas - 2; j >= 0; j--) {
-		if (posicionCat == arrayCat.length) {
-			posicionCat = 0;
+	
+		for (let j = 1; j < filas; j++) {
+			if (posicionCat == arrayCat.length) {
+				posicionCat = 0;
+			}
+			arrayPosiciones[j][columnas - 1] = arrayCat[posicionCat]
+			posicionCat++
 		}
-		arrayPosiciones[filas - 1][j] = arrayCat[posicionCat]
-		posicionCat++
-
-	}
-
-	for (let j = filas - 2; j > 0; j--) {
-		if (posicionCat == arrayCat.length) {
-			posicionCat = 0;
+	
+		for (let j = columnas - 2; j >= 0; j--) {
+			if (posicionCat == arrayCat.length) {
+				posicionCat = 0;
+			}
+			arrayPosiciones[filas - 1][j] = arrayCat[posicionCat]
+			posicionCat++
+	
 		}
-		arrayPosiciones[j][0] = arrayCat[posicionCat]
-		posicionCat++
-	}
-
+	
+		for (let j = filas - 2; j > 0; j--) {
+			if (posicionCat == arrayCat.length) {
+				posicionCat = 0;
+			}
+			arrayPosiciones[j][0] = arrayCat[posicionCat]
+			posicionCat++
+		}
+	*/
 	for (let fila = 0; fila <= filas - 1; fila++) {
 		for (let columna = 0; columna <= columnas - 1; columna++) {
 			const casilla = document.createElement('div');
 			const icono = document.createElement('i');
 
-			casilla.className = arrayPosiciones[fila][columna];
+			//casilla.className = arrayPosiciones[fila][columna];
+			
+			//REINICIAR EL RECORRIDO DEL ARRAY
+			if (posicionCat == arrayCat.length) {
+				posicionCat = 0;
+			}
+			if (catVertical < 0) {
+				catVertical = arrayCat.length - 1;
+			}
+			
+			
+			if (fila == 0) {
+				casilla.className = arrayCat[posicionCat]
+				icono.className = mapa.get(arrayCat[posicionCat])
+				posicionCat++;
+			} else if (columna == columnas - 1) {
 
+				casilla.className = arrayCat[posicionCat]
+				icono.className = mapa.get(arrayCat[posicionCat])
+				posicionCat++;
+			} else if (fila == filas - 1) {
+				casilla.className = arrayCat[catVertical]
+				icono.className = mapa.get(arrayCat[catVertical])
+				catVertical--;
+			}
+			else if (columna == 0) {
+				casilla.className = arrayCat[catVertical]
+				icono.className = mapa.get(arrayCat[catVertical])
+				catVertical--;
+			}
+			/*
+			if((fila==filas-1)||(columna=columnas-1)){
+				casilla.className = mapa.get("H")
+			}*/
+			/*
 			switch (casilla.className) {
 				case 'H':
 					icono.className = "fa fa-university";
@@ -147,12 +197,29 @@ function generarTablero(f, c) {
 				case 'G':
 					icono.className = "fa fa-map";
 					break;
-			}
+			}*/
 			casilla.appendChild(icono);
 			tablero.appendChild(casilla);
 		}
 	}
+	//crear fichas
+	arrayJugadores = new Array();
+	for (let i = 1; i <= numJugadores; i++) {
+		let fichaAnadir = document.createElement("div");
+		fichaAnadir.setAttribute("id", "player" + i);
+		fichaAnadir.setAttribute("class", "fa fa-user-circlefa fa-user-circle player");
+		arrayJugadores[i - 1] = fichaAnadir;
+		$('.contenedor').append(fichaAnadir);
+		/*for(let i=0;i<numJugadores;i++){
+			playerId="#player"+i+1;
+			$(playerId).css("left","20"*i);
+			$(playerId).css("top","0");
+		}*/
+		//document.getElementById("contenedor").appendChild(fichaAnadir)
+	}
+
 	inicializar();
+
 }
 
 //-----------------------------------DADO------------------------------------------------------------------------------//
@@ -237,7 +304,7 @@ function moveDerecha(numeroCasillas) {
 				posicionJugadorX++;
 				pos++;
 				auxNumCasillas--;
-				ficha.style.left = posicionJugadorX + "px";
+				arrayJugadores[turno].style.left = posicionJugadorX + "px";
 			}
 		}
 	}
@@ -419,7 +486,7 @@ function mostrarPregunta(pregunta) {
 		}
 		cont++
 		popUp.setAttribute("data-on", "on")
-		
+
 		activarSeleccionarRespuesta();
 	});
 }
@@ -452,6 +519,7 @@ function corregirRespuesta(radio, idRespuesta) {
 			}
 			cerrarDivPreguntas()
 			respondida = 1;
+			girando = false;
 
 		},
 		error: function(xhr, status, error) {
