@@ -1,4 +1,3 @@
-//------------------------------------------GERERACION DEL TABLERO------------------------------------------------//
 let arrayPosiciones = [];
 let filaActual = 0;
 let columnaActual = 0;
@@ -40,6 +39,9 @@ let arrayJugadores
 let turno
 let mapa = new Map();
 let catVertical;
+let posicionJugador
+let numeroJugadores
+//import * as constants from './consts.js';
 function inicializar() {
 
 	divPregunta = $('divPregunta')[0];
@@ -50,7 +52,7 @@ function inicializar() {
 	posicionJugadorY = 0;
 	posicionJugadorXx = 0;
 	posicionJugadorYy = 0;
-
+	respondida = 0;
 	preguntaPopup = document.getElementById("popUpPregunta");
 	formRespuestas = document.getElementById("respuestas");
 	preguntaP = document.getElementById("pregunta");
@@ -74,34 +76,32 @@ function inicializar() {
 	divRachaAcutal = document.getElementById("rachaActual");
 	fuegosArtificiales = document.getElementsByClassName("firework")[0];
 	turno = 0
-	/*arrayJugadores.foreach((ficha)=>{
-		let cont=0;
-		ficha.style.top=tamanoSaltoVertical*cont;
-		ficha.style.left=tamanoSaltoHorizontal*cont;
-		cont++;
-	})*/
-
+	posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
 }
 function generarTablero(f, c, numJugadores) {
-
 	filas = f;
 	columnas = c;
-
+	numeroJugadores = numJugadores;
 	const tablero = document.querySelector('.tablero');
+	let colors = ["white", "red", "blue", "green"];
+	
 	tablero.style.gridTemplateColumns = `repeat(${columnas}, 1fr)`;
 	tablero.style.gridTemplateRows = `repeat(${filas}, 1fr)`;
 	const arrayCat = ['G', 'H', 'D', 'C', 'A', 'E'];
+
 	mapa.set("H", "fa fa-university")
 	mapa.set("C", "fa fa-flask")
 	mapa.set("A", "fa fa-paint-brush")
 	mapa.set("E", "fa fa-film")
 	mapa.set("D", "fa fa-bicycle")
 	mapa.set("G", "fa fa-map")
+
 	catVertical = arrayCat.length - 1;
+	for (let i = 0; i < filas; i++) {
+		arrayPosiciones[i] = []
+	}
 	/*
-		for (let i = 0; i < filas; i++) {
-			arrayPosiciones[i] = []
-		}
+
 	
 		for (let j = 0; j < columnas; j++) {
 	
@@ -144,31 +144,33 @@ function generarTablero(f, c, numJugadores) {
 			const icono = document.createElement('i');
 
 			//casilla.className = arrayPosiciones[fila][columna];
-			
-			//REINICIAR EL RECORRIDO DEL ARRAY
+
+			//REINICIAR EL RECORRIDO DEL ARRAY DE POSICIONES
 			if (posicionCat == arrayCat.length) {
 				posicionCat = 0;
 			}
 			if (catVertical < 0) {
 				catVertical = arrayCat.length - 1;
 			}
-			
-			
+
 			if (fila == 0) {
+				arrayPosiciones[fila][columna] = arrayCat[posicionCat]
 				casilla.className = arrayCat[posicionCat]
 				icono.className = mapa.get(arrayCat[posicionCat])
 				posicionCat++;
 			} else if (columna == columnas - 1) {
-
+				arrayPosiciones[fila][columna] = arrayCat[posicionCat]
 				casilla.className = arrayCat[posicionCat]
 				icono.className = mapa.get(arrayCat[posicionCat])
 				posicionCat++;
 			} else if (fila == filas - 1) {
+				arrayPosiciones[fila][columna] = arrayCat[catVertical]
 				casilla.className = arrayCat[catVertical]
 				icono.className = mapa.get(arrayCat[catVertical])
 				catVertical--;
 			}
 			else if (columna == 0) {
+				arrayPosiciones[fila][columna] = arrayCat[catVertical]
 				casilla.className = arrayCat[catVertical]
 				icono.className = mapa.get(arrayCat[catVertical])
 				catVertical--;
@@ -202,28 +204,29 @@ function generarTablero(f, c, numJugadores) {
 			tablero.appendChild(casilla);
 		}
 	}
+	console.log(arrayPosiciones);
 	//crear fichas
 	arrayJugadores = new Array();
 	for (let i = 1; i <= numJugadores; i++) {
 		let fichaAnadir = document.createElement("div");
 		fichaAnadir.setAttribute("id", "player" + i);
-		fichaAnadir.setAttribute("class", "fa fa-user-circlefa fa-user-circle player");
+		fichaAnadir.setAttribute("class", "fa fa-user-circle player");
 		arrayJugadores[i - 1] = fichaAnadir;
 		$('.contenedor').append(fichaAnadir);
-		/*for(let i=0;i<numJugadores;i++){
-			playerId="#player"+i+1;
-			$(playerId).css("left","20"*i);
-			$(playerId).css("top","0");
-		}*/
 		//document.getElementById("contenedor").appendChild(fichaAnadir)
 	}
-
+	for (let i = 1; i <= numJugadores; i++) {
+		$("#player" + i).css("left", "0" * i);
+		$("#player" + i).css("top", "0");
+		$("#player" + i).css("color", colors[i-1]);
+	}
 	inicializar();
-
 }
 
 //-----------------------------------DADO------------------------------------------------------------------------------//
+function generarTableros() {
 
+}
 //cube.addEventListener('click', () => {
 function girarDado() {
 	popUp.style.display = "none";
@@ -267,23 +270,33 @@ async function tirar() {
 		girando = true
 		preguntaP.innerText = "";
 
+		if (turno == numeroJugadores) {
+			turno = 0;
+		}
+		posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+
 		while (formRespuestas.firstChild) {
 			formRespuestas.removeChild(formRespuestas.firstChild);
 		}
 		const numeroCasillas = await girarDado();
-		if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1)) {
+
+		if ((posicionJugador.left < tamanoSaltoHorizontal * (columnas - 1)) && (posicionJugador.top == 0)) {
+
 			moveDerecha(numeroCasillas);
-		} else if (posicionJugadorY < tamanoSaltoVertical * (filas - 1)) {
+		} else if ((posicionJugador.top < tamanoSaltoVertical * (filas - 1)) && (posicionJugador.left > 0)) {
 			moveArribaAbajo(numeroCasillas);
-		} else if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1) && (posicionJugadorY >= tamanoSaltoVertical * (filas - 1))) {
+		} else if (posicionJugador.left >= tamanoSaltoHorizontal && (posicionJugador.top != 0)) {
 			moveIzquierda(numeroCasillas);
 		} else {
 			moveAbajoArriba(numeroCasillas);
 		}
 	}
+
 }
 
 function moveDerecha(numeroCasillas) {
+	//posicionJugadorX=posicion del jugador al que corresponde el turno
+	posicionJugadorX = posicionJugador.left;
 	let id = null;
 	clearInterval(id);
 	id = setInterval(frame, 5);
@@ -291,13 +304,13 @@ function moveDerecha(numeroCasillas) {
 	let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
 	function frame() {
 		if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1)) {
-			columnaActual = posicionJugadorX / tamanoSaltoHorizontal;
+			columnaActual = posicionJugador.top / tamanoSaltoHorizontal;
 			moveArribaAbajo(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
 			clearInterval(id);
 		}
 		if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1)) {
 			if (pos >= numeroCasillas * tamanoSaltoHorizontal) {
-				columnaActual = posicionJugadorX / tamanoSaltoHorizontal;
+				columnaActual = posicionJugador.top / tamanoSaltoHorizontal;
 				cargarPregunta()
 				clearInterval(id);
 			} else {
@@ -311,6 +324,7 @@ function moveDerecha(numeroCasillas) {
 }
 
 function moveArribaAbajo(numeroCasillas) {
+	posicionJugadorY = posicionJugador.top;
 	let idTb = null;
 	clearInterval(idTb);
 	idTb = setInterval(frameAb, 5);
@@ -318,30 +332,30 @@ function moveArribaAbajo(numeroCasillas) {
 	let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
 	function frameAb() {
 		if (posicionJugadorY >= tamanoSaltoVertical * (filas - 1)) {
-			filaActual = posicionJugadorY / tamanoSaltoVertical;
+			filaActual = posicionJugador.left / tamanoSaltoVertical;
 			moveIzquierda(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
 			clearInterval(idTb);
 		}
 		if (posicionJugadorY < tamanoSaltoVertical * (filas - 1)) {
 			if (pos >= numeroCasillas * tamanoSaltoVertical) {
 				clearInterval(idTb);
-				filaActual = posicionJugadorY / tamanoSaltoVertical;
+				filaActual = posicionJugador.left / tamanoSaltoVertical;
 				cargarPregunta()
 			} else {
 				posicionJugadorY++;
 				pos++;
 				auxNumCasillas--;
-				ficha.style.top = posicionJugadorY + "px";
+				arrayJugadores[turno].style.top = posicionJugadorY + "px";
 			}
 		}
 	}
 }
 let primeraI = true
 function moveIzquierda(numeroCasillas) {
-	if (primeraI) {
-		posicionJugadorXx = posicionJugadorX;
-		primeraI = false
-	}
+	//if (primeraI) {
+	posicionJugadorXx = posicionJugador.left;
+	//	primeraI = false
+	//}
 	let idIzq = null;
 	let posIzq = 0;
 	clearInterval(idIzq);
@@ -351,20 +365,19 @@ function moveIzquierda(numeroCasillas) {
 	function frameIzq() {
 		if (posicionJugadorXx == 0) {
 			moveAbajoArriba(Math.round(auxNumCasillas / tamanoSaltoVertical))
-			columnaActual = posicionJugadorXx / tamanoSaltoHorizontal;
+			columnaActual = posicionJugador.top / tamanoSaltoHorizontal;
 			clearInterval(idIzq);
 		}
 		if (posicionJugadorXx > 0) {
 			if (posIzq >= numeroCasillas * tamanoSaltoHorizontal) {
-				columnaActual = posicionJugadorXx / tamanoSaltoHorizontal;
-				(arrayPosiciones[filaActual][columnaActual])
+				columnaActual = posicionJugador.top / tamanoSaltoHorizontal;
 				clearInterval(idIzq);
 				cargarPregunta()
 			} else {
 				posIzq++;
 				posicionJugadorXx--;
 				auxNumCasillas--;
-				ficha.style.left = posicionJugadorXx + "px";
+				arrayJugadores[turno].style.left = posicionJugadorXx + "px";
 			}
 		}
 	}
@@ -372,10 +385,10 @@ function moveIzquierda(numeroCasillas) {
 
 function moveAbajoArriba(numeroCasillas) {
 	let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
-	if (primeraD) {
-		posicionJugadorYy = posicionJugadorY;
-		primeraD = false
-	}
+	//if (primeraD) {
+	posicionJugadorYy = posicionJugador.top;
+	//	primeraD = false
+	//}
 	let id = null;
 	let pos = 0;
 	clearInterval(id);
@@ -390,18 +403,19 @@ function moveAbajoArriba(numeroCasillas) {
 			primeraD = true;
 			primeraI = true;
 			moveDerecha(Math.round(auxNumCasillas / tamanoSaltoHorizontal))
-			filaActual = posicionJugadorYy / tamanoSaltoVertical;
+			filaActual = posicionJugador.left / tamanoSaltoVertical;
 			clearInterval(id);
 		}
 		if (posicionJugadorYy > 0) {
 			if (pos >= numeroCasillas * tamanoSaltoVertical) {
-				filaActual = posicionJugadorYy / tamanoSaltoVertical;
+				filaActual = posicionJugador.left / tamanoSaltoVertical;
 				cargarPregunta()
+				clearInterval(id)
 			} else {
 				posicionJugadorYy--;
 				pos++;
 				auxNumCasillas--;
-				ficha.style.top = posicionJugadorYy + "px";
+				arrayJugadores[turno].style.top = posicionJugadorYy + "px";
 			}
 		}
 	}
@@ -410,7 +424,7 @@ function moveAbajoArriba(numeroCasillas) {
 //-----------------------------------------LLAMADAS BACK-----------------------------------------------------------//
 
 function getCategoria(categoriaActual) {
-
+	console.log(categoriaActual)
 	switch (categoriaActual) {
 		case 'H':
 			return "Historia"
@@ -448,6 +462,7 @@ async function cargarPregunta() {
 		}
 
 	});
+	turno++;
 }
 function mostrarPregunta(pregunta) {
 
@@ -504,28 +519,29 @@ function corregirRespuesta(radio, idRespuesta) {
 		dataType: "json",
 		url: urlRespuestas + "corregir?idRespuesta=" + idRespuesta,
 		success: function(response) {
-			if (response == true) {
-				preguntasCorrectas++;
-				rachaActual++;
-				actualizarPuntajes(totalPreguntas, preguntasCorrectas, preguntasIncorrectas, rachaActual)
-				radio.parentNode.style.backgroundColor = "green"
-				fuegosArtificiales.setAttribute("data-on", "on");
-				fuegosArtificiales.style.animation = "firework 2s infinite"
-			} else if (response == false) {
-				preguntasIncorrectas++;
-				rachaActual = 0;
-				actualizarPuntajes(totalPreguntas, preguntasCorrectas, preguntasIncorrectas, rachaActual)
-				radio.parentNode.style.backgroundColor = "red"
+			if (respondida == 0) {
+				if (response == true) {
+					preguntasCorrectas++;
+					rachaActual++;
+					actualizarPuntajes(totalPreguntas, preguntasCorrectas, preguntasIncorrectas, rachaActual)
+					radio.parentNode.style.backgroundColor = "green"
+					fuegosArtificiales.setAttribute("data-on", "on");
+					fuegosArtificiales.style.animation = "firework 2s infinite"
+				} else if (response == false) {
+					preguntasIncorrectas++;
+					rachaActual = 0;
+					actualizarPuntajes(totalPreguntas, preguntasCorrectas, preguntasIncorrectas, rachaActual)
+					radio.parentNode.style.backgroundColor = "red"
+				}
 			}
+
 			cerrarDivPreguntas()
 			respondida = 1;
 			girando = false;
-
 		},
 		error: function(xhr, status, error) {
 			console.error(xhr.responseText);
 		}
-
 	});
 }
 

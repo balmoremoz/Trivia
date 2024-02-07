@@ -15,7 +15,6 @@ body {
 	position:absolute;
 	border: 0 solid #0000;
     border-radius: 20px;
-    background-color: white;
 }
 .labelRespuesta {
     text-align: center;
@@ -45,7 +44,7 @@ body {
 }
 
 .fa-user-circle {
-    background-color: black;
+    background-color: white;
 }
 
 #divCasilla {
