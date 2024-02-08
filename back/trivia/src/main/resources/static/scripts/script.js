@@ -41,7 +41,7 @@ let catVertical;
 let posicionJugador
 let numeroJugadores
 let puntuaciones;
-//import * as constants from './consts.js';
+
 function inicializar() {
 
 	divPregunta = $('divPregunta')[0];
@@ -183,7 +183,6 @@ function generarPuntuaciones() {
 	}
 }
 //-----------------------------------DADO------------------------------------------------------------------------------//
-
 function girarDado() {
 	popUp.style.display = "none";
 	cube.style.transition = '';
@@ -219,7 +218,7 @@ function girarDado() {
 		}, 1000);
 	});
 }
-//-------------------------------------MOVIMIENTO DE LA FICHA------------------------------------------------------------//
+//-------------------------------------MOVIMIENTO DE LAS FICHAS------------------------------------------------------------//
 
 async function tirar() {
 	if (girando == false) {
@@ -250,30 +249,28 @@ async function tirar() {
 function moveDerecha(numeroCasillas) {
 	//posicionJugadorX=posicion del jugador al que corresponde el turno
 	posicionJugadorX = posicionJugador.left;
-	//posicionJugadorY=posicionJugador.top;
 	let id = null;
 	clearInterval(id);
 	id = setInterval(frame, 5);
 	let pos = 0;
 	let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
 	function frame() {
-		if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1)) {
-			if ((turno % 2 != 0) && (turno != 0)) {
-				columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);//55=posicion inicial X de la ficha
-				debugger
+		if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1) + tamanoSaltoHorizontal) {//55=posicion inicial X de la ficha
+			if (turno % 2 != 0) {//si turno es impar en el tablero la ficha es par
+
+				columnaActual = (posicionJugadorX - 55) / tamanoSaltoHorizontal;
 			} else {
-				columnaActual = posicionJugadorX / tamanoSaltoHorizontal;
+				columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);
 			}
 			moveArribaAbajo(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
 			clearInterval(id);
 		}
-		if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1)) {
+		if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1) + tamanoSaltoHorizontal) {
 			if (pos >= numeroCasillas * tamanoSaltoHorizontal) {
-				//columnaActual = Math.round(posicionJugadorX / tamanoSaltoHorizontal);
-				if (turno != 0) {
-					columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);//55=posicion inicial X de la ficha
+				if (turno % 2 != 0) {//si turno es impar en el tablero la ficha es par
+					columnaActual = (posicionJugadorX - 55) / tamanoSaltoHorizontal;
 				} else {
-					columnaActual = posicionJugadorX / tamanoSaltoHorizontal;
+					columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);
 				}
 				filaActual = posicionJugadorY / tamanoSaltoVertical;
 				console.log("columna->" + columnaActual, "fila->" + filaActual)
@@ -291,7 +288,6 @@ function moveDerecha(numeroCasillas) {
 
 function moveArribaAbajo(numeroCasillas) {
 	posicionJugadorY = posicionJugador.top;
-	//posicionJugadorX=posicionJugador.left;
 	if (turno != 0) {
 		columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);//55=posicion inicial X de la ficha
 	} else {
