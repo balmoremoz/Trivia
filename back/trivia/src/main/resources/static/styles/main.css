@@ -16,6 +16,9 @@ body {
 	border: 0 solid #0000;
     border-radius: 20px;
 }
+.player .fa{
+	font-size:20px;
+}
 .labelRespuesta {
     text-align: center;
     width: 200px;
@@ -38,9 +41,8 @@ body {
     grid-row-gap: 10px;
 }
 
-/*Tamaño de los iconos*/
 .fa {
-    font-size: 23px;
+    font-size: 20px;
 }
 
 .fa-user-circle {

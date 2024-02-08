@@ -19,7 +19,6 @@ let formRespuestas
 let preguntaP
 let tamanoSaltoHorizontal
 let tamanoSaltoVertical
-let primeraD
 let popUp;
 let body;
 let urlPreguntas;
@@ -58,7 +57,6 @@ function inicializar() {
 	preguntaP = document.getElementById("pregunta");
 	tamanoSaltoHorizontal = document.querySelector(".H").offsetWidth;
 	tamanoSaltoVertical = document.querySelector(".H").offsetHeight;
-	primeraD = true
 	popUp = document.getElementById("popUpPregunta");
 	body = document.getElementsByTagName("body");
 	urlPreguntas = 'http://localhost:8081/pregunta/';
@@ -84,7 +82,7 @@ function generarTablero(f, c, numJugadores) {
 	numeroJugadores = numJugadores;
 	const tablero = document.querySelector('.tablero');
 	let colors = ["white", "red", "blue", "green"];
-	
+
 	tablero.style.gridTemplateColumns = `repeat(${columnas}, 1fr)`;
 	tablero.style.gridTemplateRows = `repeat(${filas}, 1fr)`;
 	const arrayCat = ['G', 'H', 'D', 'C', 'A', 'E'];
@@ -100,50 +98,10 @@ function generarTablero(f, c, numJugadores) {
 	for (let i = 0; i < filas; i++) {
 		arrayPosiciones[i] = []
 	}
-	/*
-
-	
-		for (let j = 0; j < columnas; j++) {
-	
-			if (posicionCat == arrayCat.length) {
-				posicionCat = 0;
-			}
-			arrayPosiciones[0][j] = arrayCat[posicionCat]
-			posicionCat++;
-	
-		}
-	
-		for (let j = 1; j < filas; j++) {
-			if (posicionCat == arrayCat.length) {
-				posicionCat = 0;
-			}
-			arrayPosiciones[j][columnas - 1] = arrayCat[posicionCat]
-			posicionCat++
-		}
-	
-		for (let j = columnas - 2; j >= 0; j--) {
-			if (posicionCat == arrayCat.length) {
-				posicionCat = 0;
-			}
-			arrayPosiciones[filas - 1][j] = arrayCat[posicionCat]
-			posicionCat++
-	
-		}
-	
-		for (let j = filas - 2; j > 0; j--) {
-			if (posicionCat == arrayCat.length) {
-				posicionCat = 0;
-			}
-			arrayPosiciones[j][0] = arrayCat[posicionCat]
-			posicionCat++
-		}
-	*/
 	for (let fila = 0; fila <= filas - 1; fila++) {
 		for (let columna = 0; columna <= columnas - 1; columna++) {
 			const casilla = document.createElement('div');
 			const icono = document.createElement('i');
-
-			//casilla.className = arrayPosiciones[fila][columna];
 
 			//REINICIAR EL RECORRIDO DEL ARRAY DE POSICIONES
 			if (posicionCat == arrayCat.length) {
@@ -175,36 +133,11 @@ function generarTablero(f, c, numJugadores) {
 				icono.className = mapa.get(arrayCat[catVertical])
 				catVertical--;
 			}
-			/*
-			if((fila==filas-1)||(columna=columnas-1)){
-				casilla.className = mapa.get("H")
-			}*/
-			/*
-			switch (casilla.className) {
-				case 'H':
-					icono.className = "fa fa-university";
-					break;
-				case 'C':
-					icono.className = "fa fa-flask";
-					break;
-				case 'A':
-					icono.className = "fa fa-paint-brush";
-					break;
-				case 'E':
-					icono.className = "fa fa-film";
-					break;
-				case 'D':
-					icono.className = "fa fa-bicycle";
-					break;
-				case 'G':
-					icono.className = "fa fa-map";
-					break;
-			}*/
 			casilla.appendChild(icono);
 			tablero.appendChild(casilla);
 		}
 	}
-	console.log(arrayPosiciones);
+	console.log(arrayPosiciones)
 	//crear fichas
 	arrayJugadores = new Array();
 	for (let i = 1; i <= numJugadores; i++) {
@@ -213,12 +146,18 @@ function generarTablero(f, c, numJugadores) {
 		fichaAnadir.setAttribute("class", "fa fa-user-circle player");
 		arrayJugadores[i - 1] = fichaAnadir;
 		$('.contenedor').append(fichaAnadir);
-		//document.getElementById("contenedor").appendChild(fichaAnadir)
 	}
+	tamanoSaltoHorizontal = 75//CAMBIAR POR EL TAMAÑO DE LAS CASILLAS DESPUES DE LAS PRUEBAS
+	tamanoSaltoVertical = 60//----------------------------------------------------------------
 	for (let i = 1; i <= numJugadores; i++) {
-		$("#player" + i).css("left", "0" * i);
-		$("#player" + i).css("top", "0");
-		$("#player" + i).css("color", colors[i-1]);
+		if (i % 2 != 0) {
+			$("#player" + i).css("left", "0");
+			$("#player" + i).css("top", (((i - 1) * tamanoSaltoVertical)) / i);
+		} else {
+			$("#player" + i).css("left", tamanoSaltoHorizontal - 20);//20=tamaño de la ficha
+			$("#player" + i).css("top",(((i - 2) * tamanoSaltoVertical)) / (i-1));
+		}
+		$("#player" + i).css("color", colors[i - 1]);
 	}
 	inicializar();
 }
@@ -227,7 +166,6 @@ function generarTablero(f, c, numJugadores) {
 function generarTableros() {
 
 }
-//cube.addEventListener('click', () => {
 function girarDado() {
 	popUp.style.display = "none";
 	cube.style.transition = '';
@@ -274,14 +212,12 @@ async function tirar() {
 			turno = 0;
 		}
 		posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-
+		console.log(posicionJugador);
 		while (formRespuestas.firstChild) {
 			formRespuestas.removeChild(formRespuestas.firstChild);
 		}
-		const numeroCasillas = await girarDado();
-
+		let numeroCasillas = await girarDado();
 		if ((posicionJugador.left < tamanoSaltoHorizontal * (columnas - 1)) && (posicionJugador.top == 0)) {
-
 			moveDerecha(numeroCasillas);
 		} else if ((posicionJugador.top < tamanoSaltoVertical * (filas - 1)) && (posicionJugador.left > 0)) {
 			moveArribaAbajo(numeroCasillas);
@@ -291,12 +227,12 @@ async function tirar() {
 			moveAbajoArriba(numeroCasillas);
 		}
 	}
-
 }
 
 function moveDerecha(numeroCasillas) {
 	//posicionJugadorX=posicion del jugador al que corresponde el turno
 	posicionJugadorX = posicionJugador.left;
+	//posicionJugadorY=posicionJugador.top;
 	let id = null;
 	clearInterval(id);
 	id = setInterval(frame, 5);
@@ -304,13 +240,25 @@ function moveDerecha(numeroCasillas) {
 	let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
 	function frame() {
 		if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1)) {
-			columnaActual = posicionJugador.top / tamanoSaltoHorizontal;
+			if ((turno % 2 != 0) && (turno != 0)) {
+				columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);//55=posicion inicial X de la ficha
+				debugger
+			} else {
+				columnaActual = posicionJugadorX / tamanoSaltoHorizontal;
+			}
 			moveArribaAbajo(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
 			clearInterval(id);
 		}
 		if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1)) {
 			if (pos >= numeroCasillas * tamanoSaltoHorizontal) {
-				columnaActual = posicionJugador.top / tamanoSaltoHorizontal;
+				//columnaActual = Math.round(posicionJugadorX / tamanoSaltoHorizontal);
+				if (turno != 0) {
+					columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);//55=posicion inicial X de la ficha
+				} else {
+					columnaActual = posicionJugadorX / tamanoSaltoHorizontal;
+				}
+				filaActual = posicionJugadorY / tamanoSaltoVertical;
+				console.log("columna->" + columnaActual, "fila->" + filaActual)
 				cargarPregunta()
 				clearInterval(id);
 			} else {
@@ -325,6 +273,12 @@ function moveDerecha(numeroCasillas) {
 
 function moveArribaAbajo(numeroCasillas) {
 	posicionJugadorY = posicionJugador.top;
+	//posicionJugadorX=posicionJugador.left;
+	if (turno != 0) {
+		columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);//55=posicion inicial X de la ficha
+	} else {
+		columnaActual = posicionJugadorX / tamanoSaltoHorizontal;
+	}
 	let idTb = null;
 	clearInterval(idTb);
 	idTb = setInterval(frameAb, 5);
@@ -332,14 +286,16 @@ function moveArribaAbajo(numeroCasillas) {
 	let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
 	function frameAb() {
 		if (posicionJugadorY >= tamanoSaltoVertical * (filas - 1)) {
-			filaActual = posicionJugador.left / tamanoSaltoVertical;
+			filaActual = posicionJugadorY / tamanoSaltoVertical;
+			console.log("fila->" + filaActual + " columna->" + columnaActual)
 			moveIzquierda(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
 			clearInterval(idTb);
 		}
 		if (posicionJugadorY < tamanoSaltoVertical * (filas - 1)) {
 			if (pos >= numeroCasillas * tamanoSaltoVertical) {
 				clearInterval(idTb);
-				filaActual = posicionJugador.left / tamanoSaltoVertical;
+				filaActual = posicionJugadorY / tamanoSaltoVertical;
+				console.log("fila->" + filaActual + " columna->" + columnaActual);
 				cargarPregunta()
 			} else {
 				posicionJugadorY++;
@@ -350,12 +306,11 @@ function moveArribaAbajo(numeroCasillas) {
 		}
 	}
 }
-let primeraI = true
+
 function moveIzquierda(numeroCasillas) {
-	//if (primeraI) {
+
 	posicionJugadorXx = posicionJugador.left;
-	//	primeraI = false
-	//}
+
 	let idIzq = null;
 	let posIzq = 0;
 	clearInterval(idIzq);
@@ -365,12 +320,12 @@ function moveIzquierda(numeroCasillas) {
 	function frameIzq() {
 		if (posicionJugadorXx == 0) {
 			moveAbajoArriba(Math.round(auxNumCasillas / tamanoSaltoVertical))
-			columnaActual = posicionJugador.top / tamanoSaltoHorizontal;
+			columnaActual = posicionJugadorXx / tamanoSaltoHorizontal;
 			clearInterval(idIzq);
 		}
 		if (posicionJugadorXx > 0) {
 			if (posIzq >= numeroCasillas * tamanoSaltoHorizontal) {
-				columnaActual = posicionJugador.top / tamanoSaltoHorizontal;
+				columnaActual = posicionJugadorXx / tamanoSaltoHorizontal;
 				clearInterval(idIzq);
 				cargarPregunta()
 			} else {
@@ -385,10 +340,9 @@ function moveIzquierda(numeroCasillas) {
 
 function moveAbajoArriba(numeroCasillas) {
 	let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
-	//if (primeraD) {
+
 	posicionJugadorYy = posicionJugador.top;
-	//	primeraD = false
-	//}
+
 	let id = null;
 	let pos = 0;
 	clearInterval(id);
@@ -400,15 +354,14 @@ function moveAbajoArriba(numeroCasillas) {
 			posicionJugadorY = 0;
 			posicionJugadorXx = 0;
 			posicionJugadorYy = 0;
-			primeraD = true;
-			primeraI = true;
+
 			moveDerecha(Math.round(auxNumCasillas / tamanoSaltoHorizontal))
-			filaActual = posicionJugador.left / tamanoSaltoVertical;
+			filaActual = posicionJugadorYy / tamanoSaltoVertical;
 			clearInterval(id);
 		}
 		if (posicionJugadorYy > 0) {
 			if (pos >= numeroCasillas * tamanoSaltoVertical) {
-				filaActual = posicionJugador.left / tamanoSaltoVertical;
+				filaActual = posicionJugadorYy / tamanoSaltoVertical;
 				cargarPregunta()
 				clearInterval(id)
 			} else {
@@ -424,7 +377,7 @@ function moveAbajoArriba(numeroCasillas) {
 //-----------------------------------------LLAMADAS BACK-----------------------------------------------------------//
 
 function getCategoria(categoriaActual) {
-	console.log(categoriaActual)
+
 	switch (categoriaActual) {
 		case 'H':
 			return "Historia"
