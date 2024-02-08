@@ -40,6 +40,7 @@ let mapa = new Map();
 let catVertical;
 let posicionJugador
 let numeroJugadores
+let puntuaciones;
 //import * as constants from './consts.js';
 function inicializar() {
 
@@ -75,6 +76,7 @@ function inicializar() {
 	fuegosArtificiales = document.getElementsByClassName("firework")[0];
 	turno = 0
 	posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+
 }
 function generarTablero(f, c, numJugadores) {
 	filas = f;
@@ -149,23 +151,39 @@ function generarTablero(f, c, numJugadores) {
 	}
 	tamanoSaltoHorizontal = 75//CAMBIAR POR EL TAMAÑO DE LAS CASILLAS DESPUES DE LAS PRUEBAS
 	tamanoSaltoVertical = 60//----------------------------------------------------------------
+	puntuaciones = [numeroJugadores];
 	for (let i = 1; i <= numJugadores; i++) {
 		if (i % 2 != 0) {
 			$("#player" + i).css("left", "0");
 			$("#player" + i).css("top", (((i - 1) * tamanoSaltoVertical)) / i);
 		} else {
 			$("#player" + i).css("left", tamanoSaltoHorizontal - 20);//20=tamaño de la ficha
-			$("#player" + i).css("top",(((i - 2) * tamanoSaltoVertical)) / (i-1));
+			$("#player" + i).css("top", (((i - 2) * tamanoSaltoVertical)) / (i - 1));
 		}
 		$("#player" + i).css("color", colors[i - 1]);
+		puntuaciones[i - 1] = 0;
 	}
+	console.log(puntuaciones)
 	inicializar();
+	generarPuntuaciones();
 }
+function generarPuntuaciones() {
+	let tabla = $('#puntuaciones');
 
+	for (let i = 0; i < numeroJugadores; i++) {
+		let filaJugador = document.createElement("tr");
+		let nombreJugador = document.createElement("th");
+		let puntos = document.createElement("th");
+		puntos.innerText = puntuaciones[i];
+		nombreJugador.innerText = arrayJugadores[i].getAttribute("id");
+		filaJugador.appendChild(nombreJugador);
+		filaJugador.appendChild(puntos);
+		puntos.className = "puntuacion";
+		tabla.append(filaJugador)
+	}
+}
 //-----------------------------------DADO------------------------------------------------------------------------------//
-function generarTableros() {
 
-}
 function girarDado() {
 	popUp.style.display = "none";
 	cube.style.transition = '';
@@ -217,7 +235,7 @@ async function tirar() {
 			formRespuestas.removeChild(formRespuestas.firstChild);
 		}
 		let numeroCasillas = await girarDado();
-		if ((posicionJugador.left < tamanoSaltoHorizontal * (columnas - 1)) && (posicionJugador.top == 0)) {
+		if ((posicionJugador.left < tamanoSaltoHorizontal * (columnas - 1)) && (posicionJugador.top < tamanoSaltoVertical)) {
 			moveDerecha(numeroCasillas);
 		} else if ((posicionJugador.top < tamanoSaltoVertical * (filas - 1)) && (posicionJugador.left > 0)) {
 			moveArribaAbajo(numeroCasillas);
@@ -415,7 +433,6 @@ async function cargarPregunta() {
 		}
 
 	});
-	turno++;
 }
 function mostrarPregunta(pregunta) {
 
@@ -454,7 +471,6 @@ function mostrarPregunta(pregunta) {
 		}
 		cont++
 		popUp.setAttribute("data-on", "on")
-
 		activarSeleccionarRespuesta();
 	});
 }
@@ -476,14 +492,14 @@ function corregirRespuesta(radio, idRespuesta) {
 				if (response == true) {
 					preguntasCorrectas++;
 					rachaActual++;
-					actualizarPuntajes(totalPreguntas, preguntasCorrectas, preguntasIncorrectas, rachaActual)
+					puntuaciones[turno]++;
+					actualizarPuntajes(puntuaciones[turno])
 					radio.parentNode.style.backgroundColor = "green"
 					fuegosArtificiales.setAttribute("data-on", "on");
 					fuegosArtificiales.style.animation = "firework 2s infinite"
 				} else if (response == false) {
 					preguntasIncorrectas++;
 					rachaActual = 0;
-					actualizarPuntajes(totalPreguntas, preguntasCorrectas, preguntasIncorrectas, rachaActual)
 					radio.parentNode.style.backgroundColor = "red"
 				}
 			}
@@ -491,6 +507,7 @@ function corregirRespuesta(radio, idRespuesta) {
 			cerrarDivPreguntas()
 			respondida = 1;
 			girando = false;
+			turno++;
 		},
 		error: function(xhr, status, error) {
 			console.error(xhr.responseText);
@@ -506,9 +523,7 @@ function cerrarDivPreguntas() {
 
 }
 
-function actualizarPuntajes(totalPreguntas, preguntasCorrectas, preguntasIncorrectas, racha) {
-	divTotalPreguntas.innerHTML = totalPreguntas
-	divPreguntasCorrectas.innerText = preguntasCorrectas;
-	divPreguntasIncorrectas.innerText = preguntasIncorrectas
-	divRachaAcutal.innerHTML = racha
+function actualizarPuntajes(puntuacion) {
+	let puntuaciones = document.getElementsByClassName("puntuacion");
+	puntuaciones[turno].innerText = puntuacion;
 }

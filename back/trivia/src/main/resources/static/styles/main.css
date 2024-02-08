@@ -350,6 +350,7 @@ div#tablero div {
     font-size: 8;
     font-family: Arial, Helvetica, sans-serif;
     border-width: 1px;
+    text-align:center;
 }
 
 table,
