@@ -166,19 +166,22 @@ function generarTablero(f, c, numJugadores) {
 	console.log(puntuaciones)
 	inicializar();
 	generarPuntuaciones();
+	pintarTurno();
 }
 function generarPuntuaciones() {
 	let tabla = $('#puntuaciones');
 
 	for (let i = 0; i < numeroJugadores; i++) {
 		let filaJugador = document.createElement("tr");
+		filaJugador.className = "jugador";
 		let nombreJugador = document.createElement("th");
+		nombreJugador.className = "jugadorNombre";
 		let puntos = document.createElement("th");
 		puntos.innerText = puntuaciones[i];
 		nombreJugador.innerText = arrayJugadores[i].getAttribute("id");
 		filaJugador.appendChild(nombreJugador);
 		filaJugador.appendChild(puntos);
-		puntos.className = "puntuacion";
+		puntos.className = "jugadorPuntuacion";
 		tabla.append(filaJugador)
 	}
 }
@@ -224,12 +227,7 @@ async function tirar() {
 	if (girando == false) {
 		girando = true
 		preguntaP.innerText = "";
-
-		if (turno == numeroJugadores) {
-			turno = 0;
-		}
 		posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-		console.log(posicionJugador);
 		while (formRespuestas.firstChild) {
 			formRespuestas.removeChild(formRespuestas.firstChild);
 		}
@@ -257,8 +255,7 @@ function moveDerecha(numeroCasillas) {
 	function frame() {
 		if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1) + tamanoSaltoHorizontal) {//55=posicion inicial X de la ficha
 			if (turno % 2 != 0) {//si turno es impar en el tablero la ficha es par
-
-				columnaActual = (posicionJugadorX - 55) / tamanoSaltoHorizontal;
+				columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
 			} else {
 				columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);
 			}
@@ -267,8 +264,8 @@ function moveDerecha(numeroCasillas) {
 		}
 		if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1) + tamanoSaltoHorizontal) {
 			if (pos >= numeroCasillas * tamanoSaltoHorizontal) {
-				if (turno % 2 != 0) {//si turno es impar en el tablero la ficha es par
-					columnaActual = (posicionJugadorX - 55) / tamanoSaltoHorizontal;
+				if (turno % 2 != 0) {
+					columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
 				} else {
 					columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);
 				}
@@ -301,7 +298,6 @@ function moveArribaAbajo(numeroCasillas) {
 	function frameAb() {
 		if (posicionJugadorY >= tamanoSaltoVertical * (filas - 1)) {
 			filaActual = posicionJugadorY / tamanoSaltoVertical;
-			console.log("fila->" + filaActual + " columna->" + columnaActual)
 			moveIzquierda(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
 			clearInterval(idTb);
 		}
@@ -309,7 +305,6 @@ function moveArribaAbajo(numeroCasillas) {
 			if (pos >= numeroCasillas * tamanoSaltoVertical) {
 				clearInterval(idTb);
 				filaActual = posicionJugadorY / tamanoSaltoVertical;
-				console.log("fila->" + filaActual + " columna->" + columnaActual);
 				cargarPregunta()
 			} else {
 				posicionJugadorY++;
@@ -416,7 +411,7 @@ function getCategoria(categoriaActual) {
 
 async function cargarPregunta() {
 	popUp.style.display = "block"
-
+	console.log("fila->" + filaActual, "columna->" + columnaActual)
 	$.ajax({
 		type: "GET",
 		dataType: "json",
@@ -499,11 +494,11 @@ function corregirRespuesta(radio, idRespuesta) {
 					radio.parentNode.style.backgroundColor = "red"
 				}
 			}
-
 			cerrarDivPreguntas()
 			respondida = 1;
 			girando = false;
-			turno++;
+			actualizarTurno();
+
 		},
 		error: function(xhr, status, error) {
 			console.error(xhr.responseText);
@@ -518,8 +513,27 @@ function cerrarDivPreguntas() {
 	}, 2000);
 
 }
+function actualizarTurno() {
 
+	if (turno == numeroJugadores-1) {
+		turno = 0;
+	} else {
+		turno++;
+	}
+	pintarTurno();
+}
+function pintarTurno() {
+	let filasJugadores = document.getElementsByClassName("jugador");
+	console.log(turno);
+	if (turno > 0) {
+		filasJugadores[turno - 1].style.backgroundColor = "white";
+		filasJugadores[turno].style.backgroundColor = "green";
+	} else {
+		filasJugadores[turno].style.backgroundColor = "green";
+		filasJugadores[numeroJugadores-1].style.backgroundColor="white";
+	}
+}
 function actualizarPuntajes(puntuacion) {
-	let puntuaciones = document.getElementsByClassName("puntuacion");
+	let puntuaciones = document.getElementsByClassName("jugadorPuntuacion");
 	puntuaciones[turno].innerText = puntuacion;
 }

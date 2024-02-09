@@ -360,6 +360,9 @@ td {
     height: 5px
 }
 
+#puntuaciones tr{
+	backgroundColor:green;
+}
 /*-------------------------------------FUEGOS ARTIFICIALES-----------------------------------------------*/
 @keyframes firework {
     0% {
