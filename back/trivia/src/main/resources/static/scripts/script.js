@@ -41,9 +41,8 @@ let catVertical;
 let posicionJugador
 let numeroJugadores
 let puntuaciones;
-
+let meta;
 function inicializar() {
-
 	divPregunta = $('divPregunta')[0];
 	cube = document.querySelector('.cubo');
 	time = 0.5;
@@ -52,7 +51,7 @@ function inicializar() {
 	posicionJugadorY = 0;
 	posicionJugadorXx = 0;
 	posicionJugadorYy = 0;
-	respondida = 0;
+	respondida = null;
 	preguntaPopup = document.getElementById("popUpPregunta");
 	formRespuestas = document.getElementById("respuestas");
 	preguntaP = document.getElementById("pregunta");
@@ -76,9 +75,10 @@ function inicializar() {
 	fuegosArtificiales = document.getElementsByClassName("firework")[0];
 	turno = 0
 	posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-
+	console.log("fin")
 }
-function generarTablero(f, c, numJugadores) {
+function generarTablero(f, c, numJugadores, meta) {
+	meta = meta;
 	filas = f;
 	columnas = c;
 	numeroJugadores = numJugadores;
@@ -139,7 +139,6 @@ function generarTablero(f, c, numJugadores) {
 			tablero.appendChild(casilla);
 		}
 	}
-	console.log(arrayPosiciones)
 	//crear fichas
 	arrayJugadores = new Array();
 	for (let i = 1; i <= numJugadores; i++) {
@@ -163,7 +162,7 @@ function generarTablero(f, c, numJugadores) {
 		$("#player" + i).css("color", colors[i - 1]);
 		puntuaciones[i - 1] = 0;
 	}
-	console.log(puntuaciones)
+
 	inicializar();
 	generarPuntuaciones();
 	pintarTurno();
@@ -190,7 +189,7 @@ function girarDado() {
 	popUp.style.display = "none";
 	cube.style.transition = '';
 	cube.style.transform = `translateY(40px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)`;
-	respondida = 0;
+	respondida = null;
 	const randomValue = Math.floor((Math.random() * 6) + 1);
 	setTimeout(() => {
 		cube.style.transition = `transform ${time}s`;
@@ -222,19 +221,17 @@ function girarDado() {
 	});
 }
 //-------------------------------------MOVIMIENTO DE LAS FICHAS------------------------------------------------------------//
-
-async function tirar() {
+async function tirar(numeroCasillas) {
 	if (girando == false) {
 		girando = true
 		preguntaP.innerText = "";
 		posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-		while (formRespuestas.firstChild) {
-			formRespuestas.removeChild(formRespuestas.firstChild);
-		}
-		let numeroCasillas = await girarDado();
+
+		//let numeroCasillas = await girarDado();
+
 		if ((posicionJugador.left < tamanoSaltoHorizontal * (columnas - 1)) && (posicionJugador.top < tamanoSaltoVertical)) {
 			moveDerecha(numeroCasillas);
-		} else if ((posicionJugador.top < tamanoSaltoVertical * (filas - 1)) && (posicionJugador.left > 0)) {
+		} else if ((posicionJugador.top < tamanoSaltoVertical * (filas - 1)) && (posicionJugador.left > tamanoSaltoHorizontal)) {
 			moveArribaAbajo(numeroCasillas);
 		} else if (posicionJugador.left >= tamanoSaltoHorizontal && (posicionJugador.top != 0)) {
 			moveIzquierda(numeroCasillas);
@@ -243,36 +240,59 @@ async function tirar() {
 		}
 	}
 }
+function prueba() {
+	turno = $("#numJugador").val();
+	tirar($("#numCasillas").val());
+}
+
+function limpiarPopUp() {
+	while (formRespuestas.firstChild) {
+		formRespuestas.removeChild(formRespuestas.firstChild);
+	}
+}
 
 function moveDerecha(numeroCasillas) {
 	//posicionJugadorX=posicion del jugador al que corresponde el turno
 	posicionJugadorX = posicionJugador.left;
+	posicionJugadorY = posicionJugador.top;
 	let id = null;
 	clearInterval(id);
 	id = setInterval(frame, 5);
 	let pos = 0;
 	let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
+
 	function frame() {
-		if (posicionJugadorX >= tamanoSaltoHorizontal * (columnas - 1) + tamanoSaltoHorizontal) {//55=posicion inicial X de la ficha
-			if (turno % 2 != 0) {//si turno es impar en el tablero la ficha es par
+		if (turno % 2 != 0) {//si es par turno par(2,4)
+			if (posicionJugadorX >= (tamanoSaltoHorizontal * columnas) - 20) {
+				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
 				columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
-			} else {
-				columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);
+				filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
+				moveArribaAbajo(Math.round((auxNumCasillas - 45) / tamanoSaltoVertical));
+				clearInterval(id);
 			}
-			moveArribaAbajo(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
-			clearInterval(id);
+		} else if (posicionJugadorX >= (tamanoSaltoHorizontal * (columnas - 1))) {
+			{
+				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+				columnaActual = Math.round((posicionJugadorX - 45) / tamanoSaltoHorizontal);
+				filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
+				moveArribaAbajo(Math.round((auxNumCasillas - 45) / tamanoSaltoVertical));
+				clearInterval(id);
+			}
 		}
-		if (posicionJugadorX < tamanoSaltoHorizontal * (columnas - 1) + tamanoSaltoHorizontal) {
+		if (posicionJugadorX < (tamanoSaltoHorizontal * (columnas - 1)) + tamanoSaltoHorizontal) {//+tamanoSaltoHorizontal
 			if (pos >= numeroCasillas * tamanoSaltoHorizontal) {
-				if (turno % 2 != 0) {
+				if (turno % 2 != 0) {//control de las fichas a la derecha del todo
 					columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
 				} else {
-					columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);
+					columnaActual = Math.round(posicionJugadorX / tamanoSaltoHorizontal);
 				}
-				filaActual = posicionJugadorY / tamanoSaltoVertical;
-				console.log("columna->" + columnaActual, "fila->" + filaActual)
-				cargarPregunta()
+				if (turno > 1) {//control de las 2 fichas inferiores
+					filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical) - 1;
+				} else {
+					filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
+				}
 				clearInterval(id);
+				cargarPregunta();
 			} else {
 				posicionJugadorX++;
 				pos++;
@@ -284,28 +304,51 @@ function moveDerecha(numeroCasillas) {
 }
 
 function moveArribaAbajo(numeroCasillas) {
+	posicionJugadorX = posicionJugador.left;
 	posicionJugadorY = posicionJugador.top;
-	if (turno != 0) {
-		columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);//55=posicion inicial X de la ficha
-	} else {
-		columnaActual = posicionJugadorX / tamanoSaltoHorizontal;
-	}
 	let idTb = null;
 	clearInterval(idTb);
 	idTb = setInterval(frameAb, 5);
 	let pos = 0;
 	let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
 	function frameAb() {
-		if (posicionJugadorY >= tamanoSaltoVertical * (filas - 1)) {
-			filaActual = posicionJugadorY / tamanoSaltoVertical;
-			moveIzquierda(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
-			clearInterval(idTb);
-		}
-		if (posicionJugadorY < tamanoSaltoVertical * (filas - 1)) {
-			if (pos >= numeroCasillas * tamanoSaltoVertical) {
-				clearInterval(idTb);
+		//if (posicionJugadorY >= tamanoSaltoVertical * (filas - 1)) { --dudoso este if
+		//console.log("if1");
+		//filaActual = posicionJugadorY / tamanoSaltoVertical;
+		//moveIzquierda(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
+		//clearInterval(idTb);
+		if (turno > 1) {
+			if (posicionJugadorY >= (tamanoSaltoVertical * ((filas)) - 20)) {//35=tamaño de la casilla vertical -20(tamaño de la ficha) inicial para que llegue abajo del todo
+				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+				columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
 				filaActual = posicionJugadorY / tamanoSaltoVertical;
-				cargarPregunta()
+				moveIzquierda(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
+				clearInterval(idTb);
+			}
+		} else {
+			if (posicionJugadorY >= tamanoSaltoVertical * (filas - 1)) {
+				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+				columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);
+				filaActual = posicionJugadorY / tamanoSaltoVertical;
+				moveIzquierda(Math.round((auxNumCasillas+75) / tamanoSaltoHorizontal));//copiar arriba
+				clearInterval(idTb);
+			}
+		}
+		//}
+		if (posicionJugadorY < (tamanoSaltoVertical * (filas - 1)) + tamanoSaltoVertical) {
+			if (pos >= numeroCasillas * tamanoSaltoVertical) {
+				if (turno % 2 != 0) {//control de las fichas a la derecha del todo
+					columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
+				} else {
+					columnaActual = Math.round(posicionJugadorX / tamanoSaltoHorizontal);
+				}
+				if (turno > 1) {//control de las 2 fichas inferiores
+					filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical) - 1;
+				} else {
+					filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
+				}
+				cargarPregunta();
+				clearInterval(idTb);
 			} else {
 				posicionJugadorY++;
 				pos++;
@@ -317,9 +360,9 @@ function moveArribaAbajo(numeroCasillas) {
 }
 
 function moveIzquierda(numeroCasillas) {
-
+	posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
 	posicionJugadorXx = posicionJugador.left;
-
+	posicionJugadorYy = posicionJugador.top;
 	let idIzq = null;
 	let posIzq = 0;
 	clearInterval(idIzq);
@@ -327,16 +370,42 @@ function moveIzquierda(numeroCasillas) {
 	let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
 
 	function frameIzq() {
-		if (posicionJugadorXx == 0) {
-			moveAbajoArriba(Math.round(auxNumCasillas / tamanoSaltoVertical))
-			columnaActual = posicionJugadorXx / tamanoSaltoHorizontal;
-			clearInterval(idIzq);
+		//if (posicionJugadorXx == 0) {
+		//	moveAbajoArriba(Math.round(auxNumCasillas / tamanoSaltoVertical))
+		//	clearInterval(idIzq);
+		//}
+		if (turno % 2 != 0) {//si es par turno par(2,4)
+			if (posicionJugadorXx == 55) {//55= posicion X inicial de la ficha 
+				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+				columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
+				filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
+				moveAbajoArriba(Math.round(auxNumCasillas / tamanoSaltoVertical));
+				clearInterval(idIzq);
+			}
+		} else {
+			if (posicionJugadorXx == 0) {//20 tamaño de la ficha
+				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+				columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);
+				filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
+				moveAbajoArriba(Math.round(auxNumCasillas / tamanoSaltoVertical));
+				clearInterval(idIzq);
+			}
 		}
 		if (posicionJugadorXx > 0) {
 			if (posIzq >= numeroCasillas * tamanoSaltoHorizontal) {
-				columnaActual = posicionJugadorXx / tamanoSaltoHorizontal;
+
+				if (turno % 2 != 0) {//control de las fichas a la derecha del todo
+					columnaActual = Math.round((posicionJugadorXx - 55) / tamanoSaltoHorizontal);
+				} else {
+					columnaActual = Math.round(posicionJugadorXx / tamanoSaltoHorizontal);
+				}
+				if (turno > 1) {//control de las 2 fichas inferiores
+					filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical) - 1;
+				} else {
+					filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical);
+				}
+				cargarPregunta();
 				clearInterval(idIzq);
-				cargarPregunta()
 			} else {
 				posIzq++;
 				posicionJugadorXx--;
@@ -346,32 +415,59 @@ function moveIzquierda(numeroCasillas) {
 		}
 	}
 }
-
 function moveAbajoArriba(numeroCasillas) {
-	let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
-
+	posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+	posicionJugadorXx = posicionJugador.left;
 	posicionJugadorYy = posicionJugador.top;
 
+	let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
+	posicionJugadorYy = posicionJugador.top;
 	let id = null;
 	let pos = 0;
 	clearInterval(id);
 	id = setInterval(frame, 5);
 
 	function frame() {
-		if (posicionJugadorYy == 0) {
-			posicionJugadorX = 0;
-			posicionJugadorY = 0;
-			posicionJugadorXx = 0;
-			posicionJugadorYy = 0;
 
-			moveDerecha(Math.round(auxNumCasillas / tamanoSaltoHorizontal))
-			filaActual = posicionJugadorYy / tamanoSaltoVertical;
-			clearInterval(id);
+		if (turno > 1) {//si es par turno par(2,4)
+			if (posicionJugadorYy == 40) {//35=tamaño de la casilla vertical -20(tamaño de la ficha) inicial para que llegue abajo del todo
+				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+				columnaActual = Math.round((posicionJugadorXx - 55) / tamanoSaltoHorizontal);
+				filaActual = posicionJugadorYy / tamanoSaltoVertical;
+				posicionJugadorX = 0;
+				posicionJugadorY = 0;
+				posicionJugadorXx = 0;
+				posicionJugadorYy = 0;
+				moveDerecha(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
+				clearInterval(id);
+			}
+		} else {
+			if (posicionJugadorYy == 0) {
+				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+				columnaActual = Math.round((posicionJugadorXx) / tamanoSaltoHorizontal);
+				filaActual = posicionJugadorYy / tamanoSaltoVertical;
+				posicionJugadorX = 0;
+				posicionJugadorY = 0;
+				posicionJugadorXx = 0;
+				posicionJugadorYy = 0;
+				moveDerecha(Math.round(auxNumCasillas / tamanoSaltoHorizontal));
+				clearInterval(id);
+			}
 		}
 		if (posicionJugadorYy > 0) {
 			if (pos >= numeroCasillas * tamanoSaltoVertical) {
-				filaActual = posicionJugadorYy / tamanoSaltoVertical;
-				cargarPregunta()
+				if (turno % 2 != 0) {//control de las fichas a la derecha del todo
+					columnaActual = Math.round((posicionJugadorXx - 55) / tamanoSaltoHorizontal);
+				} else {
+					columnaActual = Math.round(posicionJugadorXx / tamanoSaltoHorizontal);
+				}
+				if (turno > 1) {//control de las 2 fichas inferiores
+					filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical) - 1;
+				} else {
+					filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical);
+				}
+
+				cargarPregunta();
 				clearInterval(id)
 			} else {
 				posicionJugadorYy--;
@@ -384,7 +480,6 @@ function moveAbajoArriba(numeroCasillas) {
 
 }
 //-----------------------------------------LLAMADAS BACK-----------------------------------------------------------//
-
 function getCategoria(categoriaActual) {
 
 	switch (categoriaActual) {
@@ -410,8 +505,11 @@ function getCategoria(categoriaActual) {
 }
 
 async function cargarPregunta() {
+	if (respondida != null) {
+		return;
+	}
+	respondida = 0;
 	popUp.style.display = "block"
-	console.log("fila->" + filaActual, "columna->" + columnaActual)
 	$.ajax({
 		type: "GET",
 		dataType: "json",
@@ -422,11 +520,10 @@ async function cargarPregunta() {
 		error: function(xhr) {
 			console.error(xhr.responseText);
 		}
-
 	});
 }
 function mostrarPregunta(pregunta) {
-
+	limpiarPopUp();
 	totalPreguntas++;
 	preguntaP.innerText = pregunta.pregunta;
 	preguntaPopup.style.top = (tamanoSaltoVertical * filas) + "px";
@@ -439,12 +536,12 @@ function mostrarPregunta(pregunta) {
 	btnConfirmar.style.width = "fit-content";
 
 	pregunta.respuestas.forEach(respuesta => {
-		let respuestaRb = document.createElement("input")
-		let labelRepuesta = document.createElement("label")
+		let respuestaRb = document.createElement("input");
+		let labelRepuesta = document.createElement("label");
 		labelRepuesta.setAttribute("class", "labelRespuesta");
-		respuestaRb.setAttribute("type", "radio")
-		respuestaRb.setAttribute("name", "respuesta")
-		respuestaRb.setAttribute("value", respuesta.id)
+		respuestaRb.setAttribute("type", "radio");
+		respuestaRb.setAttribute("name", "respuesta");
+		respuestaRb.setAttribute("value", respuesta.id);
 		labelRepuesta.innerText = respuesta.respuesta;
 		labelRepuesta.style.marginTop = "10px";
 
@@ -454,14 +551,14 @@ function mostrarPregunta(pregunta) {
 		labelRepuesta.appendChild(respuestaRb);
 
 		if (cont == 1) {
-			labelRepuesta.style.gridColumnStart = "1"
+			labelRepuesta.style.gridColumnStart = "1";
 		}
 		if (cont == 2) {
-			labelRepuesta.style.gridColumnStart = "2"
+			labelRepuesta.style.gridColumnStart = "2";
 			cont = 0;
 		}
 		cont++
-		popUp.setAttribute("data-on", "on")
+		popUp.setAttribute("data-on", "on");
 		activarSeleccionarRespuesta();
 	});
 }
@@ -484,7 +581,7 @@ function corregirRespuesta(radio, idRespuesta) {
 					preguntasCorrectas++;
 					rachaActual++;
 					puntuaciones[turno]++;
-					actualizarPuntajes(puntuaciones[turno])
+					actualizarPuntajes(puntuaciones[turno]);
 					radio.parentNode.style.backgroundColor = "green"
 					fuegosArtificiales.setAttribute("data-on", "on");
 					fuegosArtificiales.style.animation = "firework 2s infinite"
@@ -493,11 +590,11 @@ function corregirRespuesta(radio, idRespuesta) {
 					rachaActual = 0;
 					radio.parentNode.style.backgroundColor = "red"
 				}
+				actualizarTurno();
+				respondida = 1;
 			}
 			cerrarDivPreguntas()
-			respondida = 1;
 			girando = false;
-			actualizarTurno();
 
 		},
 		error: function(xhr, status, error) {
@@ -511,11 +608,10 @@ function cerrarDivPreguntas() {
 		popUp.setAttribute("data-on", "off")
 		fuegosArtificiales.setAttribute("data-on", "off")
 	}, 2000);
-
+	respondida = null;
 }
 function actualizarTurno() {
-
-	if (turno == numeroJugadores-1) {
+	if (turno == numeroJugadores - 1) {
 		turno = 0;
 	} else {
 		turno++;
@@ -524,13 +620,14 @@ function actualizarTurno() {
 }
 function pintarTurno() {
 	let filasJugadores = document.getElementsByClassName("jugador");
-	console.log(turno);
 	if (turno > 0) {
 		filasJugadores[turno - 1].style.backgroundColor = "white";
 		filasJugadores[turno].style.backgroundColor = "green";
+		//filasJugadores[turno].style.backgroundColor =  $("#player" + turno).css("background-color");
 	} else {
+		//filasJugadores[turno].style.backgroundColor = $("#player" + turno).css("background-color");
 		filasJugadores[turno].style.backgroundColor = "green";
-		filasJugadores[numeroJugadores-1].style.backgroundColor="white";
+		filasJugadores[numeroJugadores - 1].style.backgroundColor = "white";
 	}
 }
 function actualizarPuntajes(puntuacion) {
