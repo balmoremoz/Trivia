@@ -6,16 +6,16 @@ var mobile = /android|bb|blackberry|iphone|ipad|ipod|ios|phone|iemobile|ie-mobil
 	w = document.getElementById("stepper-wrapper"),
 	wP = document.getElementById("stepper-wrapper-puntos"),
 	n = document.getElementById("number"),
-	nPuntos=document.getElementById("numPuntos")
+	//nPuntos=document.getElementById("numPuntos")
 	u = document.getElementById("step-up"),
 	d = document.getElementById("step-down"),
 	pU = document.getElementById("puntos-up"),
 	dU = document.getElementById("puntos-down"),
 	nmin = Number(n.getAttribute("min")),
 	nmax = Number(n.getAttribute("max")),
-	nminPuntos = Number(nPuntos.getAttribute("min")),
+	//nminPuntos = Number(nPuntos.getAttribute("min")),
 	nmaxlength = Number(n.getAttribute("maxlength")),
-	nPuntosmaxlength = Number(nPuntos.getAttribute("maxlength")),
+	//nPuntosmaxlength = Number(nPuntos.getAttribute("maxlength")),
 	caretPos = {'start': 1, 'end': 1},
 	yStart = 0,
 	yGrow = 250,
@@ -357,7 +357,7 @@ d.onclick = function(e) {
     return false;
 };
 
-pU.onclick = function(e) {
+/*pU.onclick = function(e) {
 	let v = Number(numPuntos.value),
 		m = 1,
 		alt = e.altKey,
@@ -427,7 +427,7 @@ dU.onclick = function(e) {
     e.preventDefault();
     e.stopPropagation();
     return false;
-};
+};*/
 p.ontouchstart = function(e) {
     // document.activeElement.blur();
 	yStart = e.pageY || e.originalEvent.touches[0].pageY;
@@ -438,7 +438,7 @@ p.ontouchmove = mtouch;
 //----------------------------------------------INICIO---------------------------------------//
 function redireccionarAlJuego() {
 	let numJugadores = document.querySelector('[name="number"]').value;
-	let meta=document.querySelector('[name="numPuntos"]').value;
+	//let meta=document.querySelector('[name="numPuntos"]').value;
 	$.ajax({
 		type: "GET",
 		url: "http://localhost:8081/Juego",
@@ -447,7 +447,7 @@ function redireccionarAlJuego() {
 			$("#content").attr("class", "d-block");
 			$('#page-wrapper').hide();
 			document.getElementsByTagName("head")[0].innerHTML+="<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css' rel='stylesheet'></link>";
-			generarTablero(10,10,numJugadores,meta);
+			generarTablero(10,10,numJugadores);
 			$( "#cssInput" ).remove();
 		},
 
