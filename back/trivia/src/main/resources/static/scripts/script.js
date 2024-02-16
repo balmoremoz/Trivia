@@ -42,6 +42,7 @@ let posicionJugador
 let numeroJugadores
 let puntuaciones;
 let meta;
+let tamanoFicha;
 function inicializar() {
 	divPregunta = $('divPregunta')[0];
 	cube = document.querySelector('.cubo');
@@ -75,6 +76,7 @@ function inicializar() {
 	fuegosArtificiales = document.getElementsByClassName("firework")[0];
 	turno = 0
 	posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
+	tamanoFicha = 20;
 }
 function generarTablero(f, c, numJugadores) {
 	//meta = meta;
@@ -166,6 +168,7 @@ function generarTablero(f, c, numJugadores) {
 	generarPuntuaciones();
 	pintarTurno();
 }
+
 function generarPuntuaciones() {
 	let tabla = $('#puntuaciones');
 
@@ -220,13 +223,12 @@ function girarDado() {
 	});
 }
 //-------------------------------------MOVIMIENTO DE LAS FICHAS------------------------------------------------------------//
-async function tirar(numeroCasillas) {
+async function tirar() {
 	if (girando == false) {
 		girando = true
 		preguntaP.innerText = "";
 		posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-
-		//let numeroCasillas = await girarDado();
+		let numeroCasillas = await girarDado();
 		if ((posicionJugador.left < tamanoSaltoHorizontal * (columnas - 1)) && (posicionJugador.top < tamanoSaltoVertical)) {
 			moveDerecha(numeroCasillas);
 		} else if ((posicionJugador.top < tamanoSaltoVertical * (filas - 1)) && (posicionJugador.left > tamanoSaltoHorizontal)) {
@@ -238,11 +240,12 @@ async function tirar(numeroCasillas) {
 		}
 	}
 }
-function prueba() {
+/*function prueba() {
 	turno = $("#numJugador").val();
 	numCasillas = $("#numCasillas").val();
+
 	tirar(numCasillas);
-}
+}*/
 
 function limpiarPopUp() {
 	while (formRespuestas.firstChild) {
@@ -251,62 +254,80 @@ function limpiarPopUp() {
 }
 
 function moveDerecha(numeroCasillas) {
+
+	//sin el math.round la posicion dl jugador 2 y 4 es decimal
 	posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-	posicionJugadorX = posicionJugador.left;
+	//posicionJugador=Math.round(posicionJugador);
+	posicionJugadorX = Math.round(posicionJugador.left);
 	posicionJugadorY = posicionJugador.top;
 	let id = null;
 	clearInterval(id);
 	id = setInterval(frame, 5);
 	let pos = 0;
-	let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;//------------
+	let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
 
 	function frame() {
-		//iF para que entre solo cuando se llegue al final
-		if (turno % 2 != 0) {//si es par turno par(2,4)
-			if (posicionJugadorX == ((tamanoSaltoHorizontal * columnas) - 20)) {
-				clearInterval(id);
-				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-				columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
-				filaActual = Math.round((posicionJugadorY - 40) / tamanoSaltoVertical);
-				if (auxNumCasillas >= 0) {
-					moveArribaAbajo(Math.round((auxNumCasillas + 45) / tamanoSaltoVertical));//--------------------
-				} else {
-					cargarPregunta();
+		//si la ficha se encuentra en la casilla de la derecha del todo
+		if (posicionJugadorX >= (tamanoSaltoHorizontal * (columnas - 1))) {
+			//si el jugador 2 o 4 se encuentra a la derecha del todo
+			if ((turno % 2 != 0) && (posicionJugadorX == (tamanoSaltoHorizontal * columnas) - tamanoFicha)) {
+				//si es el jugador 4
+				if (turno > 1) {
+					if (auxNumCasillas > 0) {//si hay que seguir recorriendo
+						clearInterval(id);
+						moveArribaAbajo(auxNumCasillas / tamanoSaltoHorizontal);
+
+					} else {//si termina en la ultima casilla de la derecha
+						clearInterval(id);
+						asignarFilaColumnaDer();
+						cargarPregunta();
+					}
+				} else {//si es el jugador 2
+					if (auxNumCasillas > 0) {
+						clearInterval(id);
+						moveArribaAbajo(auxNumCasillas / tamanoSaltoHorizontal);
+					} else {
+						clearInterval(id);
+						asignarFilaColumnaDer();
+						cargarPregunta();
+					}
+
 				}
 				return;
 			}
-		} else if (posicionJugadorX == (tamanoSaltoHorizontal * (columnas - 1))) {
-			clearInterval(id);
-			posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-			columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);
-			filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
-			if (auxNumCasillas >= 0) {
-				moveArribaAbajo(Math.round((auxNumCasillas + 45) / tamanoSaltoVertical));//--------------------
-			} else {
-				cargarPregunta();
+			//si el jugador 0 o 3 se encuentran en la ultima casilla a la derecha
+			else if ((turno % 2 == 0) && (posicionJugadorX == (tamanoSaltoHorizontal * (columnas - 1)))) {
+				//si es el jugador 3
+				if (turno > 1) {
+					if (auxNumCasillas > 0) {//si hay que seguir recorriendo
+						moveArribaAbajo(auxNumCasillas / tamanoSaltoHorizontal);
+						clearInterval(id);
+					} else {
+						clearInterval(id);
+						asignarFilaColumnaDer();
+						cargarPregunta();
+					}
+				} else {//si es el jugador 1
+
+					if (auxNumCasillas > 0) {//si hay que seguir recorriendo
+						moveArribaAbajo(auxNumCasillas / tamanoSaltoHorizontal);
+						clearInterval(id);
+					} else {//si termina en la ultima casilla de la derecha
+						clearInterval(id);
+						asignarFilaColumnaDer();
+						cargarPregunta();
+					}
+				}
+				return;
 			}
-			return;
 		}
-		//CONTORLAR SI EL TURNO >1
-		//FilaActual
-		//_________________________
 		if (pos == numeroCasillas * tamanoSaltoHorizontal) {
-
-			if (turno % 2 != 0) {
-
-				columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
-			} else {
-				columnaActual = Math.round(posicionJugadorX / tamanoSaltoHorizontal);
-			}
-			if (turno > 1) {
-				filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical) - 1;
-			} else {
-				filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
-			}
+			asignarFilaColumnaDer();
 			clearInterval(id);
 			cargarPregunta();
 
 		} else {
+
 			posicionJugadorX++;
 			pos++;
 			auxNumCasillas--;
@@ -314,64 +335,62 @@ function moveDerecha(numeroCasillas) {
 		}
 	}
 }
+function asignarFilaColumnaDer() {
+	if (turno % 2 != 0) {
+		columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
+	} else {
+		columnaActual = Math.round(posicionJugadorX / tamanoSaltoHorizontal);
+	}
+	if (turno > 1) {
+		filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical) - 1;
+	} else {
+		filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
+	}
+}
+
 
 function moveArribaAbajo(numeroCasillas) {
+	posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
 	posicionJugadorX = posicionJugador.left;
 	posicionJugadorY = posicionJugador.top;
 	let id = null;
 	clearInterval(id);
 	id = setInterval(frame, 5);
 	let pos = 0;
-	let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
+	let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
 	function frame() {
-		if (turno > 1) {
-			if (posicionJugadorY == (tamanoSaltoVertical * ((filas)) - 20)) {//35=tamaño de la casilla vertical -20(tamaño de la ficha) inicial para que llegue abajo del todo
-				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-				columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
-				filaActual = (posicionJugadorY - 40) / tamanoSaltoVertical;//---40==tamanoSaltoVertical(60)-tamaño de la ficha (20)
-				if (Math.round((auxNumCasillas - 40) / tamanoSaltoHorizontal) == 1) {//---40==tamanoSaltoVertical(60)-tamaño de la ficha (20)
-					debugger;
-					cargarPregunta();
+
+		//si la ficha está en la ultima fila de abajo
+		if (posicionJugadorY >= (tamanoSaltoVertical * (filas - 1))) {
+			//si son las fichas de abajo y estan abajo del todo
+			if ((turno > 1) && (posicionJugadorY == (tamanoSaltoVertical * filas) - tamanoFicha)) {
+				if (auxNumCasillas > 0) {//si hay que seguir recorriendo
+					moveIzquierda(auxNumCasillas / tamanoSaltoVertical);
 					clearInterval(id);
 				} else {
-					moveIzquierda(Math.round((auxNumCasillas - 40) / tamanoSaltoHorizontal));//-----------
+					asignarFilaColumnaArribaAbajo();
+					cargarPregunta();
 					clearInterval(id);
 				}
 				return;
-			}
-		} else {
-
-			if (posicionJugadorY >= tamanoSaltoVertical * (filas - 1)) {
-
-				posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-				columnaActual = Math.round((posicionJugadorX) / tamanoSaltoHorizontal);
-				filaActual = posicionJugadorY / tamanoSaltoVertical;
-				if (Math.round((auxNumCasillas - 40) / tamanoSaltoHorizontal) == 1) {
-					cargarPregunta();
+			} else if ((turno <= 1) && (posicionJugadorY == (tamanoSaltoVertical * (filas - 1)))) {
+				if (auxNumCasillas > 0) {//si hay que seguir recorriendo
+					moveIzquierda(auxNumCasillas / tamanoSaltoVertical);
 					clearInterval(id);
 				} else {
-					moveIzquierda(Math.round((auxNumCasillas - 40) / tamanoSaltoHorizontal));//55=tamanoSaltoHorizontal-tamanoFicha
+					asignarFilaColumnaArribaAbajo();
+					cargarPregunta();
 					clearInterval(id);
 				}
 				return;
 			}
 		}
+		//if para parar
 		if (posicionJugadorY < (tamanoSaltoVertical * (filas - 1)) + tamanoSaltoVertical) {
 			if (pos == numeroCasillas * tamanoSaltoVertical) {
-				if (turno % 2 != 0) {//control de las fichas a la derecha del todo
-
-					columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
-				} else {
-					columnaActual = Math.round(posicionJugadorX / tamanoSaltoHorizontal);
-				}
-				if (turno > 1) {//control de las 2 fichas inferiores
-					filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical) - 1;
-				} else {
-					filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
-				}
+				asignarFilaColumnaArribaAbajo();
 				cargarPregunta();
 				clearInterval(id);
-				return;
 			} else {
 				posicionJugadorY++;
 				pos++;
@@ -381,9 +400,24 @@ function moveArribaAbajo(numeroCasillas) {
 		}
 	}
 }
+function asignarFilaColumnaArribaAbajo() {
+
+	if (turno % 2 != 0) {//control de las fichas a la derecha del todo
+
+		columnaActual = Math.round((posicionJugadorX - 55) / tamanoSaltoHorizontal);
+	} else {
+		columnaActual = Math.round(posicionJugadorX / tamanoSaltoHorizontal);
+	}
+	if (turno > 1) {//control de las 2 fichas inferiores
+		filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical) - 1;
+	} else {
+		filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
+	}
+}
+
 function moveIzquierda(numeroCasillas) {
 	posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
-	posicionJugadorXx = posicionJugador.left;
+	posicionJugadorXx = Math.round(posicionJugador.left);
 	posicionJugadorYy = posicionJugador.top;
 	let id = null;
 	clearInterval(id);
@@ -391,41 +425,62 @@ function moveIzquierda(numeroCasillas) {
 	id = setInterval(frame, 5);
 	let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
 	function frame() {
-		if (turno % 2 != 0) {//si es par turno par(2,4)
-			if (posicionJugadorXx == 55) {//55= posicion X inicial de la ficha 
-				columnaActual = Math.round((posicionJugadorXx - 55) / tamanoSaltoHorizontal);
-				if (Math.round((auxNumCasillas - 45) / tamanoSaltoVertical) >= 0) {
-					moveAbajoArriba(Math.round((auxNumCasillas - 45) / tamanoSaltoVertical));
+		//si la ficha se encuentra en la casilla de la izquierda del todo
+		if (posicionJugadorXx <= tamanoSaltoHorizontal) {
+			//si el jugador 2 o 4 se encuentra en la casilla de la izquierda inferior
+			if ((turno % 2 != 0) && (posicionJugadorXx == tamanoSaltoHorizontal - tamanoFicha)) {
+				//si es el jugador 4
+				if (turno > 1) {
+					if (auxNumCasillas > 0) {//si hay que seguir recorriendo
+						moveAbajoArriba(auxNumCasillas / tamanoSaltoHorizontal);
+						clearInterval(id);
+					} else {//si termina en la ultima casilla de la derecha
+						clearInterval(id);
+						asignarFilaColumnaIzq();
+						cargarPregunta();
+					}
+				} else {//si es el jugador 2
+					if (auxNumCasillas > 0) {
+						moveAbajoArriba(auxNumCasillas / tamanoSaltoHorizontal);
+						clearInterval(id);
+					} else {
+						clearInterval(id);
+						asignarFilaColumnaIzq();
+						cargarPregunta();
+					}
 				}
-				cargarPregunta();
-				clearInterval(id);
 				return;
 			}
-		} else if (posicionJugadorXx == 0) {
-			debugger;
-			columnaActual = Math.round((posicionJugadorXx) / tamanoSaltoHorizontal);
-			filaActual = Math.round((posicionJugadorY) / tamanoSaltoVertical);
-			if (Math.round((auxNumCasillas - 45) / tamanoSaltoVertical) >= 0) {
-				moveAbajoArriba(Math.round((auxNumCasillas - 45) / tamanoSaltoVertical));
+			//si el jugador 0 o 3 se encuentran en la ultima casilla a la derecha
+			else if ((turno % 2 == 0) && (posicionJugadorXx == 0)) {
+				//si es el jugador 0
+				if (turno > 1) {
+					if (auxNumCasillas > 0) {//si hay que seguir recorriendo
+						moveAbajoArriba(auxNumCasillas / tamanoSaltoHorizontal);
+						clearInterval(id);
+					} else {
+						clearInterval(id);
+						asignarFilaColumnaIzq();
+						cargarPregunta();
+					}
+				} else {//si es el jugador 0
+					if (auxNumCasillas > 0) {//si hay que seguir recorriendo
+						moveAbajoArriba(auxNumCasillas / tamanoSaltoHorizontal);
+						clearInterval(id);
+					} else {//si termina en la ultima casilla de la derecha
+						clearInterval(id);
+						asignarFilaColumnaIzq();
+						cargarPregunta();
+					}
+				}
+				return;
 			}
-			cargarPregunta();
-			clearInterval(id);
-			return;
-
 		}
+
 		//if (posicionJugadorXx > 0) {
 		if (pos == (numeroCasillas * tamanoSaltoHorizontal)) {
 
-			if (turno % 2 != 0) {//control de las fichas a la derecha del todo
-				columnaActual = Math.round((posicionJugadorXx - 55) / tamanoSaltoHorizontal);
-			} else {
-				columnaActual = Math.round(posicionJugadorXx / tamanoSaltoHorizontal);
-			}
-			if (turno > 1) {//control de las 2 fichas inferiores
-				filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical) - 1;
-			} else {
-				filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical);
-			}
+			asignarFilaColumnaIzq();
 			cargarPregunta();
 			clearInterval(id);
 			return;
@@ -437,13 +492,29 @@ function moveIzquierda(numeroCasillas) {
 		}
 	}
 }
-
+function asignarFilaColumnaIzq() {
+	if (turno % 2 != 0) {//control de las fichas a la derecha del todo
+		columnaActual = Math.round((posicionJugadorXx - 55) / tamanoSaltoHorizontal);
+	} else {
+		columnaActual = Math.round(posicionJugadorXx / tamanoSaltoHorizontal);
+	}
+	if (turno > 1) {//control de las 2 fichas inferiores
+		filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical) - 1;
+	} else {
+		filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical);
+	}
+}
+function reiniciarPosiciones() {
+	posicionJugadorX = 0;
+	posicionJugadorXx = 0;
+	posicionJugadorY = 0;
+	posicionJugadorYy = 0;
+}
 function moveAbajoArriba(numeroCasillas) {
 	posicionJugador = $("#" + arrayJugadores[turno].getAttribute("id")).position();
 	posicionJugadorXx = posicionJugador.left;
-	posicionJugadorYy = posicionJugador.top;
-
-	let auxNumCasillas = numeroCasillas * tamanoSaltoHorizontal;
+	posicionJugadorYy = Math.round(posicionJugador.top);
+	let auxNumCasillas = numeroCasillas * tamanoSaltoVertical;
 	posicionJugadorYy = posicionJugador.top;
 	let id = null;
 	let pos = 0;
@@ -452,52 +523,36 @@ function moveAbajoArriba(numeroCasillas) {
 
 	function frame() {
 
-		if (turno > 1) {//si es par turno par(2,4)
-			if (posicionJugadorYy == 40) {//35=tamaño de la casilla vertical -20(tamaño de la ficha) inicial para que llegue abajo del todo
-				columnaActual = Math.round((posicionJugadorXx - 55) / tamanoSaltoHorizontal);
-				filaActual = posicionJugadorYy / tamanoSaltoVertical;
-				posicionJugadorX = posicionJugadorXx;
-				posicionJugadorY = posicionJugadorYy;
-				debugger
-				if (Math.round(auxNumCasillas - 55 / tamanoSaltoHorizontal) == 1) {
-					cargarPregunta();
-
+		//si la ficha está en la fila de arriba
+		if (posicionJugadorYy <= tamanoSaltoVertical) {
+			//si son las fichas de abajo y estan abajo del todo
+			if ((turno > 1) && (posicionJugadorYy == tamanoSaltoVertical - tamanoFicha)) {
+				reiniciarPosiciones();
+				if (auxNumCasillas > 0) {//si hay que seguir recorriendo
+					moveDerecha(auxNumCasillas / tamanoSaltoVertical);
+					clearInterval(id);
 				} else {
-					moveDerecha(Math.round((auxNumCasillas - 55) / tamanoSaltoHorizontal));
+					reiniciarPosiciones();
+					asignarFilaColumnaAbArFin();
+					cargarPregunta();
+					clearInterval(id);
 				}
-				clearInterval(id);
 				return;
-			}
-		} else {
-			if (posicionJugadorYy == 0) {
-				columnaActual = Math.round((posicionJugadorXx) / tamanoSaltoHorizontal);
-				filaActual = posicionJugadorYy / tamanoSaltoVertical;
-				posicionJugadorX = posicionJugadorXx;
-				posicionJugadorY = posicionJugadorYy;
-				debugger
-				if (Math.round(auxNumCasillas - 55 / tamanoSaltoHorizontal) == 1) {
-					cargarPregunta();
-
+			} else if ((turno <= 1) && (posicionJugadorYy == 0)) {
+				reiniciarPosiciones();
+				if (auxNumCasillas > 0) {//si hay que seguir recorriendo
+					moveDerecha(auxNumCasillas / tamanoSaltoVertical);
+					clearInterval(id);
 				} else {
-					moveDerecha(Math.round((auxNumCasillas - 40) / tamanoSaltoHorizontal));//40=tamanoSaltoHorizontal-
+					asignarFilaColumnaAbArFin();
+					cargarPregunta();
+					clearInterval(id);
 				}
-
-				clearInterval(id);
 				return;
 			}
 		}
-		//if (posicionJugadorYy > 0) {
 		if (pos == numeroCasillas * tamanoSaltoVertical) {
-			if (turno % 2 != 0) {//control de las fichas a la derecha del todo
-				columnaActual = Math.round((posicionJugadorXx - 55) / tamanoSaltoHorizontal);
-			} else {
-				columnaActual = Math.round(posicionJugadorXx / tamanoSaltoHorizontal);
-			}
-			if (turno > 1) {//control de las 2 fichas inferiores
-				filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical) - 1;
-			} else {
-				filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical);
-			}
+			asignarFilaColumnaAbAr();
 			cargarPregunta();
 			clearInterval(id);
 			return;
@@ -510,7 +565,30 @@ function moveAbajoArriba(numeroCasillas) {
 	}
 }
 
-
+function asignarFilaColumnaAbAr() {
+	if (turno % 2 != 0) {//control de las fichas a la derecha del todo
+		columnaActual = Math.round((posicionJugadorXx - 55) / tamanoSaltoHorizontal);
+	} else {
+		columnaActual = Math.round(posicionJugadorXx / tamanoSaltoHorizontal);
+	}
+	if (turno > 1) {//control de las 2 fichas inferiores
+		filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical) - 1;
+	} else {
+		filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical);
+	}
+}
+function asignarFilaColumnaAbArFin() {
+	if (turno % 2 != 0) {//control de las fichas a la derecha del todo
+		columnaActual = Math.round((posicionJugadorXx) / tamanoSaltoHorizontal);
+	} else {
+		columnaActual = Math.round(posicionJugadorXx / tamanoSaltoHorizontal);
+	}
+	if (turno > 1) {//control de las 2 fichas inferiores
+		filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical);
+	} else {
+		filaActual = Math.round((posicionJugadorYy) / tamanoSaltoVertical);
+	}
+}
 //-----------------------------------------LLAMADAS BACK-----------------------------------------------------------//
 function getCategoria(categoriaActual) {
 
@@ -537,7 +615,7 @@ function getCategoria(categoriaActual) {
 }
 
 async function cargarPregunta() {
-	debugger;
+
 	if (respondida != null) {
 		return;
 	}
